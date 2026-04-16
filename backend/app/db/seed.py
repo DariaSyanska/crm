@@ -10,7 +10,7 @@ def seed_demo_users(db: Session) -> None:
         admin = User(
             name="Admin",
             email="admin@example.com",
-            hashed_password=get_password_hash("123456"),
+            password_hash=get_password_hash("123456"),
             role="admin",
         )
         db.add(admin)
@@ -20,7 +20,7 @@ def seed_demo_users(db: Session) -> None:
         manager = User(
             name="Manager One",
             email="manager@example.com",
-            hashed_password=get_password_hash("123456"),
+            password_hash=get_password_hash("123456"),
             role="manager",
         )
         db.add(manager)

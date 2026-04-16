@@ -34,4 +34,7 @@ app.include_router(notes_router)
 
 @app.get("/")
 def root():
-    return {"message": "CRM backend is running"}
+    return {
+        "message": "CRM API is running",
+        "docs": "/docs",
+    }
