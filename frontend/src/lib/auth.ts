@@ -1,15 +1,12 @@
-export const saveToken = (token: string) => {
-  localStorage.setItem("access_token", token);
-};
+export function saveToken(token: string) {
+  localStorage.setItem("token", token);
+}
 
-export const getToken = () => {
-  return localStorage.getItem("access_token");
-};
+export function getToken() {
+  if (typeof window === "undefined") return null;
+  return localStorage.getItem("token");
+}
 
-export const removeToken = () => {
-  localStorage.removeItem("access_token");
-};
-
-export const isAuthenticated = () => {
-  return !!getToken();
-};
+export function removeToken() {
+  localStorage.removeItem("token");
+}

@@ -54,7 +54,12 @@ export default function TasksPage() {
     try {
       const response = await api.get("/users/");
       setUsers(response.data);
-    } catch (error) {
+    } catch (error: any) {
+      if (error?.response?.status === 403) {
+        setUsers([]);
+        return;
+      }
+
       console.error("Failed to fetch users:", error);
     }
   }, []);
