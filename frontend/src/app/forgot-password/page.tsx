@@ -2,19 +2,26 @@
 
 import { FormEvent, useState } from "react";
 import axios from "axios";
+import Toast from "@/components/Toast";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
-  const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
+
+  const [toast, setToast] = useState<{
+    message: string;
+    type?: "success" | "error";
+  } | null>(null);
+
+  const showToast = (message: string, type: "success" | "error" = "success") => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 2500);
+  };
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    setError("");
-    setMessage("");
 
     try {
       await axios.post(`${API_URL}/auth/reset-password`, {
@@ -22,9 +29,11 @@ export default function ForgotPasswordPage() {
         new_password: newPassword,
       });
 
-      setMessage("Password successfully updated. You can now sign in.");
+      showToast("Password updated successfully", "success");
+      setEmail("");
+      setNewPassword("");
     } catch (err: any) {
-      setError(err?.response?.data?.detail || "Error");
+      showToast(err?.response?.data?.detail || "Failed to reset password", "error");
     }
   }
 
@@ -54,13 +63,12 @@ export default function ForgotPasswordPage() {
           required
         />
 
-        {error && <p className="text-red-400 mb-2">{error}</p>}
-        {message && <p className="text-green-400 mb-2">{message}</p>}
-
         <button className="w-full bg-blue-600 rounded-xl py-3 font-semibold">
           Reset password
         </button>
       </form>
+
+      {toast && <Toast message={toast.message} type={toast.type} />}
     </main>
   );
 }

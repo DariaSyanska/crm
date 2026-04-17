@@ -10,7 +10,11 @@ router = APIRouter(prefix="/users", tags=["Users"])
 
 
 @router.post("/", response_model=UserResponse)
-def create_new_user(user: UserCreate, db: Session = Depends(get_db)):
+def create_new_user(
+    user: UserCreate, 
+    db: Session = Depends(get_db),
+    current_user=Depends(require_admin),
+):
     return create_user(db, user)
 
 

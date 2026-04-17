@@ -10,6 +10,7 @@ import NoteForm from "@/components/NoteForm";
 import NoteList from "@/components/NoteList";
 import PageActions from "@/components/PageActions";
 import StatsCards from "@/components/StatsCards";
+import Toast from "@/components/Toast";
 import { api } from "@/lib/api";
 import { getToken } from "@/lib/auth";
 import { Client } from "@/types/client";
@@ -28,6 +29,16 @@ export default function NotesPage() {
   const [editingNote, setEditingNote] = useState<Note | null>(null);
   const [deletingNote, setDeletingNote] = useState<Note | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
+
+  const [toast, setToast] = useState<{
+    message: string;
+    type?: "success" | "error";
+  } | null>(null);
+
+  const showToast = (message: string, type: "success" | "error" = "success") => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 2500);
+  };
 
   const fetchNotes = useCallback(async () => {
     try {
@@ -78,11 +89,13 @@ export default function NotesPage() {
   const handleCreated = async () => {
     await fetchNotes();
     setIsCreateOpen(false);
+    showToast("Note created successfully", "success");
   };
 
   const handleUpdated = async () => {
     await fetchNotes();
     setEditingNote(null);
+    showToast("Note updated successfully", "success");
   };
 
   const handleDelete = async () => {
@@ -93,9 +106,13 @@ export default function NotesPage() {
       await api.delete(`/notes/${deletingNote.id}`);
       await fetchNotes();
       setDeletingNote(null);
+      showToast("Note deleted successfully", "success");
     } catch (error: any) {
       console.error("Failed to delete note:", error);
-      alert(error?.response?.data?.detail || "Failed to delete note");
+      showToast(
+        error?.response?.data?.detail || "Failed to delete note",
+        "error"
+      );
     } finally {
       setDeleteLoading(false);
     }
@@ -159,6 +176,8 @@ export default function NotesPage() {
           />
         )}
       </Modal>
+
+      {toast && <Toast message={toast.message} type={toast.type} />}
     </AppShell>
   );
 }

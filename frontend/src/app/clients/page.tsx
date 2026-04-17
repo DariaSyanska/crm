@@ -11,6 +11,7 @@ import EditClientForm from "@/components/EditClientForm";
 import Modal from "@/components/Modal";
 import PageActions from "@/components/PageActions";
 import StatsCards from "@/components/StatsCards";
+import Toast from "@/components/Toast";
 import { api } from "@/lib/api";
 import { getToken } from "@/lib/auth";
 import { Client } from "@/types/client";
@@ -30,6 +31,16 @@ export default function ClientsPage() {
 
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+
+  const [toast, setToast] = useState<{
+    message: string;
+    type?: "success" | "error";
+  } | null>(null);
+
+  const showToast = (message: string, type: "success" | "error" = "success") => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 2500);
+  };
 
   const fetchClients = useCallback(async () => {
     try {
@@ -89,11 +100,13 @@ export default function ClientsPage() {
   const handleCreated = async () => {
     await fetchClients();
     setIsCreateOpen(false);
+    showToast("Client created successfully", "success");
   };
 
   const handleUpdated = async () => {
     await fetchClients();
     setEditingClient(null);
+    showToast("Client updated successfully", "success");
   };
 
   const handleDelete = async () => {
@@ -104,9 +117,13 @@ export default function ClientsPage() {
       await api.delete(`/clients/${deletingClient.id}`);
       await fetchClients();
       setDeletingClient(null);
+      showToast("Client deleted successfully", "success");
     } catch (error: any) {
       console.error("Failed to delete client:", error);
-      alert(error?.response?.data?.detail || "Failed to delete client");
+      showToast(
+        error?.response?.data?.detail || "Failed to delete client",
+        "error"
+      );
     } finally {
       setDeleteLoading(false);
     }
@@ -177,6 +194,8 @@ export default function ClientsPage() {
           />
         )}
       </Modal>
+
+      {toast && <Toast message={toast.message} type={toast.type} />}
     </AppShell>
   );
 }

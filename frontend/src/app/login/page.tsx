@@ -4,15 +4,25 @@ import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
-import { getToken, saveToken } from "@/lib/auth";
+import { getToken, saveToken, saveRefreshToken } from "@/lib/auth";
+import Toast from "@/components/Toast";
 
 export default function LoginPage() {
   const router = useRouter();
 
   const [username, setUsername] = useState("admin@example.com");
   const [password, setPassword] = useState("123456");
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const [toast, setToast] = useState<{
+    message: string;
+    type?: "success" | "error";
+  } | null>(null);
+
+  const showToast = (message: string, type: "success" | "error" = "success") => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 2500);
+  };
 
   useEffect(() => {
     if (getToken()) {
@@ -22,7 +32,6 @@ export default function LoginPage() {
 
   const handleLogin = async (e: FormEvent) => {
     e.preventDefault();
-    setError("");
     setLoading(true);
 
     try {
@@ -37,9 +46,15 @@ export default function LoginPage() {
       });
 
       saveToken(response.data.access_token);
-      router.push("/dashboard");
+      saveRefreshToken(response.data.refresh_token);
+
+      showToast("Signed in successfully", "success");
+
+      setTimeout(() => {
+        router.push("/dashboard");
+      }, 500);
     } catch (err) {
-      setError("Incorrect login or password");
+      showToast("Incorrect login or password", "error");
     } finally {
       setLoading(false);
     }
@@ -78,8 +93,6 @@ export default function LoginPage() {
           />
         </label>
 
-        {error && <p className="text-red-400 mb-4 text-sm">{error}</p>}
-
         <button
           type="submit"
           disabled={loading}
@@ -95,6 +108,8 @@ export default function LoginPage() {
           </Link>
         </p>
       </form>
+
+      {toast && <Toast message={toast.message} type={toast.type} />}
     </main>
   );
 }

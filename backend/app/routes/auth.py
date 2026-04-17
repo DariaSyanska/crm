@@ -1,20 +1,24 @@
 from datetime import timedelta
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.security import OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from app.config import settings
 from app.db.session import get_db
+from app.dependencies import get_current_user
 from app.models.user import User
 from app.schemas.auth import RegisterRequest
-from app.services.security import verify_password, get_password_hash, create_access_token
+from app.services.security import (
+    verify_password,
+    get_password_hash,
+    create_access_token,
+    create_refresh_token,
+)
 
 router = APIRouter(prefix="/auth", tags=["auth"])
-
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 
 class ResetPasswordRequest(BaseModel):
@@ -22,34 +26,8 @@ class ResetPasswordRequest(BaseModel):
     new_password: str
 
 
-def get_current_user(
-    token: str = Depends(oauth2_scheme),
-    db: Session = Depends(get_db),
-):
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-    )
-
-    try:
-        payload = jwt.decode(
-            token,
-            settings.SECRET_KEY,
-            algorithms=[settings.ALGORITHM],
-        )
-        email = payload.get("sub")
-
-        if email is None:
-            raise credentials_exception
-    except JWTError:
-        raise credentials_exception
-
-    user = db.query(User).filter(User.email == email).first()
-
-    if user is None:
-        raise credentials_exception
-
-    return user
+class RefreshTokenRequest(BaseModel):
+    refresh_token: str
 
 
 @router.post("/register")
@@ -106,8 +84,17 @@ def login(
         expires_delta=timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES),
     )
 
+    refresh_token = create_refresh_token(
+        data={
+            "sub": user.email,
+            "user_id": user.id,
+            "role": user.role,
+        }
+    )
+
     return {
         "access_token": access_token,
+        "refresh_token": refresh_token,
         "token_type": "bearer",
         "user": {
             "id": user.id,
@@ -115,6 +102,45 @@ def login(
             "email": user.email,
             "role": user.role,
         },
+    }
+
+
+@router.post("/refresh")
+def refresh_access_token(data: RefreshTokenRequest):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Invalid refresh token",
+    )
+
+    try:
+        payload = jwt.decode(
+            data.refresh_token,
+            settings.SECRET_KEY,
+            algorithms=[settings.ALGORITHM],
+        )
+
+        token_type = payload.get("type")
+        email = payload.get("sub")
+        user_id = payload.get("user_id")
+        role = payload.get("role")
+
+        if token_type != "refresh" or email is None:
+            raise credentials_exception
+
+    except JWTError:
+        raise credentials_exception
+
+    new_access_token = create_access_token(
+        data={
+            "sub": email,
+            "user_id": user_id,
+            "role": role,
+        }
+    )
+
+    return {
+        "access_token": new_access_token,
+        "token_type": "bearer",
     }
 
 

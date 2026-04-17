@@ -4,7 +4,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
 import axios from "axios";
-import { getToken, saveToken } from "@/lib/auth";
+import { getToken, saveToken, saveRefreshToken } from "@/lib/auth";
+import Toast from "@/components/Toast";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
 
@@ -16,7 +17,16 @@ export default function RegisterPage() {
   const [password, setPassword] = useState("");
 
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+
+  const [toast, setToast] = useState<{
+    message: string;
+    type?: "success" | "error";
+  } | null>(null);
+
+  const showToast = (message: string, type: "success" | "error" = "success") => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 2500);
+  };
 
   useEffect(() => {
     if (getToken()) {
@@ -26,7 +36,6 @@ export default function RegisterPage() {
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    setError("");
     setLoading(true);
 
     try {
@@ -47,9 +56,15 @@ export default function RegisterPage() {
       });
 
       saveToken(loginResponse.data.access_token);
-      router.push("/dashboard");
+      saveRefreshToken(loginResponse.data.refresh_token);
+
+      showToast("Account created successfully", "success");
+
+      setTimeout(() => {
+        router.push("/dashboard");
+      }, 500);
     } catch (err: any) {
-      setError(err?.response?.data?.detail || "Registration failed");
+      showToast(err?.response?.data?.detail || "Registration failed", "error");
     } finally {
       setLoading(false);
     }
@@ -102,8 +117,6 @@ export default function RegisterPage() {
             />
           </div>
 
-          {error && <p className="text-sm text-red-400">{error}</p>}
-
           <button
             type="submit"
             disabled={loading}
@@ -123,6 +136,8 @@ export default function RegisterPage() {
           </Link>
         </p>
       </div>
+
+      {toast && <Toast message={toast.message} type={toast.type} />}
     </main>
   );
 }

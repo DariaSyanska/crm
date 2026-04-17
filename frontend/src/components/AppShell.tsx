@@ -65,7 +65,7 @@ export default function AppShell({ title, subtitle, children }: Props) {
             ))}
           </nav>
 
-          <UserMenu name={me?.name} email={me?.email} />
+          <UserMenu name={me?.name} email={me?.email} role={me?.role} />
         </div>
       </header>
 
