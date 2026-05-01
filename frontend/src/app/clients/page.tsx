@@ -5,9 +5,9 @@ import { useRouter } from "next/navigation";
 import AppShell from "@/components/AppShell";
 import ClientForm from "@/components/ClientForm";
 import ClientList from "@/components/ClientList";
-import ClientsToolbar from "@/components/ClientsToolbar";
 import DeleteConfirm from "@/components/DeleteConfirm";
 import EditClientForm from "@/components/EditClientForm";
+import EmptyState from "@/components/EmptyState";
 import Modal from "@/components/Modal";
 import PageActions from "@/components/PageActions";
 import StatsCards from "@/components/StatsCards";
@@ -37,7 +37,10 @@ export default function ClientsPage() {
     type?: "success" | "error";
   } | null>(null);
 
-  const showToast = (message: string, type: "success" | "error" = "success") => {
+  const showToast = (
+    message: string,
+    type: "success" | "error" = "success",
+  ) => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 2500);
   };
@@ -79,22 +82,29 @@ export default function ClientsPage() {
   }, [router, fetchClients, fetchUsers]);
 
   const filteredClients = useMemo(() => {
-    return clients.filter((client) => {
-      const matchesSearch =
-        client.name.toLowerCase().includes(search.toLowerCase()) ||
-        (client.email || "").toLowerCase().includes(search.toLowerCase()) ||
-        (client.company || "").toLowerCase().includes(search.toLowerCase());
+    const query = search.trim().toLowerCase();
 
+    return clients.filter((client) => {
       const matchesStatus =
         statusFilter === "all" ||
         client.status.toLowerCase() === statusFilter.toLowerCase();
 
-      return matchesSearch && matchesStatus;
+      const manager = users.find((u) => u.id === client.manager_id);
+
+      const matchesSearch =
+        query === "" ||
+        client.name.toLowerCase().includes(query) ||
+        (client.email || "").toLowerCase().includes(query) ||
+        (client.company || "").toLowerCase().includes(query) ||
+        (client.phone || "").toLowerCase().includes(query) ||
+        (manager?.name || "").toLowerCase().includes(query);
+
+      return matchesStatus && matchesSearch;
     });
-  }, [clients, search, statusFilter]);
+  }, [clients, users, search, statusFilter]);
 
   const activeCount = clients.filter(
-    (client) => client.status.toLowerCase() === "active"
+    (client) => client.status.toLowerCase() === "active",
   ).length;
 
   const handleCreated = async () => {
@@ -122,7 +132,7 @@ export default function ClientsPage() {
       console.error("Failed to delete client:", error);
       showToast(
         error?.response?.data?.detail || "Failed to delete client",
-        "error"
+        "error",
       );
     } finally {
       setDeleteLoading(false);
@@ -135,22 +145,93 @@ export default function ClientsPage() {
         items={[
           { label: "Total Clients", value: clients.length },
           { label: "Active Clients", value: activeCount },
-          { label: "Filtered Results", value: filteredClients.length },
+          { label: "Visible", value: filteredClients.length },
         ]}
       />
 
-      <ClientsToolbar
-        search={search}
-        status={statusFilter}
-        onSearchChange={setSearch}
-        onStatusChange={setStatusFilter}
-        total={filteredClients.length}
+      <PageActions
+        buttonText="+ New Client"
+        onClick={() => setIsCreateOpen(true)}
       />
 
-      <PageActions buttonText="+ New Client" onClick={() => setIsCreateOpen(true)} />
+      <div className="mb-4">
+        <input
+          type="text"
+          placeholder="Search clients, companies, email, phone, manager..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-blue-500"
+        />
+      </div>
+
+      <div className="mb-6 flex flex-wrap gap-2">
+        <button
+          onClick={() => setStatusFilter("all")}
+          className={`rounded-xl px-4 py-2 text-sm font-medium transition ${
+            statusFilter === "all"
+              ? "bg-slate-900 text-white"
+              : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
+          }`}
+        >
+          All
+        </button>
+
+        <button
+          onClick={() => setStatusFilter("lead")}
+          className={`rounded-xl px-4 py-2 text-sm font-medium transition ${
+            statusFilter === "lead"
+              ? "bg-blue-600 text-white"
+              : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
+          }`}
+        >
+          Lead
+        </button>
+
+        <button
+          onClick={() => setStatusFilter("active")}
+          className={`rounded-xl px-4 py-2 text-sm font-medium transition ${
+            statusFilter === "active"
+              ? "bg-green-600 text-white"
+              : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
+          }`}
+        >
+          Active
+        </button>
+
+        <button
+          onClick={() => setStatusFilter("inactive")}
+          className={`rounded-xl px-4 py-2 text-sm font-medium transition ${
+            statusFilter === "inactive"
+              ? "bg-slate-500 text-white"
+              : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
+          }`}
+        >
+          Inactive
+        </button>
+      </div>
 
       {loading ? (
         <p className="text-slate-500">Loading clients...</p>
+      ) : filteredClients.length === 0 ? (
+        <EmptyState
+          title={clients.length === 0 ? "No clients yet" : "No clients found"}
+          description={
+            clients.length === 0
+              ? "Create your first client to start managing customer relationships."
+              : "Try changing your search or filter settings."
+          }
+          action={
+            clients.length === 0 ? (
+              <button
+                type="button"
+                onClick={() => setIsCreateOpen(true)}
+                className="rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-slate-700"
+              >
+                + Create Client
+              </button>
+            ) : null
+          }
+        />
       ) : (
         <ClientList
           clients={filteredClients}

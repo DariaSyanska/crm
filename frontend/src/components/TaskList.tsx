@@ -2,19 +2,7 @@ import { Client } from "@/types/client";
 import { Task } from "@/types/task";
 import { User } from "@/types/user";
 import Avatar from "@/components/ui/Avatar";
-
-function getTaskStatusClasses(status: string) {
-  switch (status.toLowerCase()) {
-    case "open":
-      return "bg-blue-100 text-blue-700";
-    case "in_progress":
-      return "bg-yellow-100 text-yellow-700";
-    case "done":
-      return "bg-green-100 text-green-700";
-    default:
-      return "bg-slate-100 text-slate-700";
-  }
-}
+import StatusBadge from "@/components/StatusBadge";
 
 function getClient(clientId: number | null | undefined, clients: Client[]) {
   if (!clientId) return null;
@@ -32,9 +20,10 @@ type Props = {
   users: User[];
   onEdit: (task: Task) => void;
   onDelete: (task: Task) => void;
+  onComplete: (taskId: number) => void;
 };
 
-export default function TaskList({ tasks, clients, users, onEdit, onDelete }: Props) {
+export default function TaskList({ tasks, clients, users, onEdit, onDelete, onComplete, }: Props) {
   if (tasks.length === 0) {
     return (
       <div className="rounded-2xl bg-white border border-slate-200 shadow-sm p-10 text-center text-slate-500">
@@ -97,7 +86,6 @@ export default function TaskList({ tasks, clients, users, onEdit, onDelete }: Pr
                         <Avatar name={user.name} size="sm" />
                         <div>
                           <p className="text-slate-900 font-medium">{user.name}</p>
-                          <p className="text-xs text-slate-500 capitalize">{user.role}</p>
                         </div>
                       </div>
                     ) : (
@@ -106,27 +94,44 @@ export default function TaskList({ tasks, clients, users, onEdit, onDelete }: Pr
                   </td>
 
                   <td className="px-6 py-4">
-                    <span
-                      className={`inline-flex px-3 py-1 rounded-full text-xs font-medium ${getTaskStatusClasses(
-                        task.status
-                      )}`}
-                    >
-                      {task.status.replace("_", " ")}
-                    </span>
+                    <StatusBadge status={task.status} />
                   </td>
 
-                  <td className="px-6 py-4 text-slate-600">
-                    {task.due_date ? new Date(task.due_date).toLocaleString() : "-"}
+                  <td className="px-6 py-4">
+                    {task.due_date ? (
+                      <span
+                        className={
+                        new Date(task.due_date) < new Date() &&
+                        task.status.toLowerCase() !== "done"
+                          ? "font-medium text-red-600"
+                          : "text-slate-700"
+                        }
+                      >
+                        {new Date(task.due_date).toLocaleDateString()}
+                      </span>
+                    ) : (
+                      "-"
+                    )}
                   </td>
 
                   <td className="px-6 py-4">
                     <div className="flex gap-2">
+                      {task.status.toLowerCase() !== "done" && (
+                        <button
+                          onClick={() => onComplete(task.id)}
+                          className="px-3 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 transition text-xs font-medium"
+                        >
+                          Complete
+                        </button>
+                      )}
+
                       <button
                         onClick={() => onEdit(task)}
                         className="px-3 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition text-xs font-medium"
                       >
                         Edit
                       </button>
+
                       <button
                         onClick={() => onDelete(task)}
                         className="px-3 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition text-xs font-medium"

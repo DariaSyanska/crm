@@ -1,5 +1,5 @@
 from app.db.session import Base, engine, SessionLocal
-from app.db.seed import seed_demo_users
+from app.db.seed import seed_demo_users, seed_demo_data
 
 from app.models.user import User
 from app.models.client import Client
@@ -14,5 +14,6 @@ def init_db() -> None:
     db = SessionLocal()
     try:
         seed_demo_users(db)
+        seed_demo_data(db)
     finally:
         db.close()

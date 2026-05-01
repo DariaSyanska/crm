@@ -1,20 +1,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  BarChart,
-  Bar,
-  CartesianGrid,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
+import { BarChart, Bar, CartesianGrid, Tooltip, XAxis, YAxis } from "recharts";
 import { Deal } from "@/types/deal";
 import { useChartSize } from "@/components/dashboard/useChartSize";
 
 type Props = {
   deals: Deal[];
 };
+
+const stages = ["lead", "contacted", "negotiation", "won", "lost"];
+
+const formatStage = (stage: string) =>
+  stage.charAt(0).toUpperCase() + stage.slice(1);
 
 export default function DealsStageChart({ deals }: Props) {
   const [mounted, setMounted] = useState(false);
@@ -24,25 +22,64 @@ export default function DealsStageChart({ deals }: Props) {
     setMounted(true);
   }, []);
 
-  const stages = ["lead", "contacted", "negotiation", "won", "lost"];
+  const data = stages.map((stage) => {
+    const stageDeals = deals.filter(
+      (deal) => deal.stage.toLowerCase() === stage,
+    );
 
-  const data = stages.map((stage) => ({
-    stage,
-    count: deals.filter((deal) => deal.stage.toLowerCase() === stage).length,
-  }));
+    return {
+      stage: formatStage(stage),
+      count: stageDeals.length,
+      value: stageDeals.reduce(
+        (total, deal) => total + Number(deal.amount || 0),
+        0,
+      ),
+    };
+  });
 
   return (
-    <div className="rounded-2xl bg-white border border-slate-200 shadow-sm p-6 min-w-0">
-      <h3 className="text-lg font-semibold text-slate-900 mb-4">Deals by Stage</h3>
+    <div className="min-w-0 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div className="mb-6">
+        <h3 className="text-lg font-semibold text-slate-900">Deals by Stage</h3>
+        <p className="mt-1 text-sm text-slate-500">
+          Pipeline overview by deal status and potential value.
+        </p>
+      </div>
 
-      <div ref={ref} className="w-full h-[320px] min-w-0">
+      <div ref={ref} className="h-[320px] w-full min-w-0">
         {mounted && width > 0 ? (
-          <BarChart width={width} height={320} data={data}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="stage" />
-            <YAxis allowDecimals={false} />
-            <Tooltip />
-            <Bar dataKey="count" radius={[8, 8, 0, 0]} />
+          <BarChart width={width} height={320} data={data} barSize={36}>
+            <CartesianGrid strokeDasharray="3 3" vertical={false} />
+            <XAxis
+              dataKey="stage"
+              tickLine={false}
+              axisLine={false}
+              tick={{ fontSize: 12 }}
+            />
+            <YAxis
+              allowDecimals={false}
+              tickLine={false}
+              axisLine={false}
+              tick={{ fontSize: 12 }}
+            />
+            <Tooltip
+              formatter={(value, name) => {
+                if (name === "value") {
+                  return [
+                    `$${Number(value).toLocaleString("en-US")}`,
+                    "Pipeline value",
+                  ];
+                }
+
+                return [value, "Deals"];
+              }}
+              labelStyle={{ fontWeight: 600 }}
+              contentStyle={{
+                borderRadius: "12px",
+                border: "1px solid #e2e8f0",
+              }}
+            />
+            <Bar dataKey="count" radius={[10, 10, 0, 0]} />
           </BarChart>
         ) : null}
       </div>

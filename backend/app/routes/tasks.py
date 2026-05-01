@@ -104,3 +104,20 @@ def delete_task(
     db.delete(task)
     db.commit()
     return {"message": "Task deleted"}
+
+
+@router.patch("/{task_id}/complete", response_model=TaskResponse)
+def complete_task(
+    task_id: int,
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user)
+):
+    task = get_task_or_404(db, task_id)
+
+    if current_user.role != "admin" and task.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Access denied")
+
+    task.status = "done"
+    db.commit()
+    db.refresh(task)
+    return task

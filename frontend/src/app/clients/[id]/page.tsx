@@ -12,6 +12,9 @@ import { Deal } from "@/types/deal";
 import { Note } from "@/types/note";
 import { Task } from "@/types/task";
 import { User } from "@/types/user";
+import QuickNoteForm from "@/components/QuickNoteForm";
+import Toast from "@/components/Toast";
+import QuickTaskForm from "@/components/QuickTaskForm";
 
 function formatDate(dateString?: string | null) {
   if (!dateString) return "-";
@@ -83,21 +86,35 @@ export default function ClientDetailsPage() {
   const [notes, setNotes] = useState<Note[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const [toast, setToast] = useState<{
+    message: string;
+    type?: "success" | "error";
+  } | null>(null);
+
   const fetchData = useCallback(async () => {
     try {
-      const [clientRes, usersRes, dealsRes, tasksRes, notesRes] = await Promise.all([
+      const [clientRes, dealsRes, tasksRes, notesRes] = await Promise.all([
         api.get(`/clients/${clientId}`),
-        api.get("/users/"),
         api.get("/deals/"),
         api.get("/tasks/"),
         api.get("/notes/"),
       ]);
 
       setClient(clientRes.data);
-      setUsers(usersRes.data);
       setDeals(dealsRes.data);
       setTasks(tasksRes.data);
       setNotes(notesRes.data);
+
+      try {
+        const usersRes = await api.get("/users/");
+        setUsers(usersRes.data);
+      } catch (error: any) {
+        if (error?.response?.status === 403) {
+          setUsers([]);
+        } else {
+          console.error("Failed to fetch users:", error);
+        }
+      }
     } catch (error) {
       console.error("Failed to fetch client details:", error);
       router.push("/clients");
@@ -105,6 +122,14 @@ export default function ClientDetailsPage() {
       setLoading(false);
     }
   }, [clientId, router]);
+
+  const showToast = (
+    message: string,
+    type: "success" | "error" = "success",
+  ) => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 2500);
+  };
 
   useEffect(() => {
     if (!getToken()) {
@@ -120,19 +145,44 @@ export default function ClientDetailsPage() {
     fetchData();
   }, [clientId, router, fetchData]);
 
-  const manager = useMemo(() => getManager(client?.manager_id, users), [client, users]);
+  const manager = useMemo(
+    () => getManager(client?.manager_id, users),
+    [client, users],
+  );
   const clientDeals = useMemo(
     () => deals.filter((deal) => deal.client_id === clientId),
-    [deals, clientId]
+    [deals, clientId],
   );
   const clientTasks = useMemo(
     () => tasks.filter((task) => task.client_id === clientId),
-    [tasks, clientId]
+    [tasks, clientId],
   );
   const clientNotes = useMemo(
     () => notes.filter((note) => note.client_id === clientId),
-    [notes, clientId]
+    [notes, clientId],
   );
+
+  const handleNoteCreated = async () => {
+    try {
+      const notesRes = await api.get("/notes/");
+      setNotes(notesRes.data);
+      showToast("Note added successfully", "success");
+    } catch (error) {
+      console.error("Failed to refresh notes:", error);
+      showToast("Note created, but failed to refresh notes", "error");
+    }
+  };
+
+  const handleTaskCreated = async () => {
+    try {
+      const tasksRes = await api.get("/tasks/");
+      setTasks(tasksRes.data);
+      showToast("Task added successfully", "success");
+    } catch (error) {
+      console.error("Failed to refresh tasks:", error);
+      showToast("Task created, but failed to refresh tasks", "error");
+    }
+  };
 
   if (loading) {
     return (
@@ -153,7 +203,10 @@ export default function ClientDetailsPage() {
   }
 
   return (
-    <AppShell title="Client Details" subtitle="Full customer profile and activity.">
+    <AppShell
+      title="Client Details"
+      subtitle="Full customer profile and activity."
+    >
       <div className="mb-6">
         <Link href="/clients" className="text-sm text-blue-600 hover:underline">
           ← Back to clients
@@ -165,10 +218,16 @@ export default function ClientDetailsPage() {
           <div className="flex items-start gap-4">
             <Avatar name={client.name} />
             <div>
-              <h2 className="text-2xl font-semibold text-slate-900">{client.name}</h2>
-              <p className="text-slate-500 mt-1">{client.company || "No company"}</p>
+              <h2 className="text-2xl font-semibold text-slate-900">
+                {client.name}
+              </h2>
+              <p className="text-slate-500 mt-1">
+                {client.company || "No company"}
+              </p>
               <div className="mt-3">
-                <span className={`inline-flex px-3 py-1 rounded-full text-xs font-medium ${statusBadge(client.status)}`}>
+                <span
+                  className={`inline-flex px-3 py-1 rounded-full text-xs font-medium ${statusBadge(client.status)}`}
+                >
                   {client.status}
                 </span>
               </div>
@@ -178,11 +237,15 @@ export default function ClientDetailsPage() {
           <div className="grid gap-4 md:grid-cols-2 mt-6">
             <div>
               <p className="text-sm text-slate-500">Email</p>
-              <p className="text-slate-900 font-medium">{client.email || "-"}</p>
+              <p className="text-slate-900 font-medium">
+                {client.email || "-"}
+              </p>
             </div>
             <div>
               <p className="text-sm text-slate-500">Phone</p>
-              <p className="text-slate-900 font-medium">{client.phone || "-"}</p>
+              <p className="text-slate-900 font-medium">
+                {client.phone || "-"}
+              </p>
             </div>
             <div>
               <p className="text-sm text-slate-500">Client ID</p>
@@ -190,7 +253,9 @@ export default function ClientDetailsPage() {
             </div>
             <div>
               <p className="text-sm text-slate-500">Created</p>
-              <p className="text-slate-900 font-medium">{formatDate(client.created_at || null)}</p>
+              <p className="text-slate-900 font-medium">
+                {formatDate(client.created_at || null)}
+              </p>
             </div>
           </div>
         </div>
@@ -202,7 +267,9 @@ export default function ClientDetailsPage() {
               <Avatar name={manager.name} />
               <div>
                 <p className="text-slate-900 font-medium">{manager.name}</p>
-                <p className="text-sm text-slate-500 capitalize">{manager.role}</p>
+                <p className="text-sm text-slate-500 capitalize">
+                  {manager.role}
+                </p>
                 <p className="text-sm text-slate-500">{manager.email}</p>
               </div>
             </div>
@@ -215,15 +282,21 @@ export default function ClientDetailsPage() {
       <div className="grid gap-6 md:grid-cols-3 mt-6">
         <div className="rounded-2xl bg-white border border-slate-200 shadow-sm p-6">
           <p className="text-sm text-slate-500">Deals</p>
-          <p className="text-4xl font-bold text-slate-900 mt-2">{clientDeals.length}</p>
+          <p className="text-4xl font-bold text-slate-900 mt-2">
+            {clientDeals.length}
+          </p>
         </div>
         <div className="rounded-2xl bg-white border border-slate-200 shadow-sm p-6">
           <p className="text-sm text-slate-500">Tasks</p>
-          <p className="text-4xl font-bold text-slate-900 mt-2">{clientTasks.length}</p>
+          <p className="text-4xl font-bold text-slate-900 mt-2">
+            {clientTasks.length}
+          </p>
         </div>
         <div className="rounded-2xl bg-white border border-slate-200 shadow-sm p-6">
           <p className="text-sm text-slate-500">Notes</p>
-          <p className="text-4xl font-bold text-slate-900 mt-2">{clientNotes.length}</p>
+          <p className="text-4xl font-bold text-slate-900 mt-2">
+            {clientNotes.length}
+          </p>
         </div>
       </div>
 
@@ -235,75 +308,109 @@ export default function ClientDetailsPage() {
               <p className="text-slate-500">No deals yet.</p>
             ) : (
               clientDeals.map((deal) => (
-                <div key={deal.id} className="border border-slate-200 rounded-xl p-4">
+                <div
+                  key={deal.id}
+                  className="border border-slate-200 rounded-xl p-4"
+                >
                   <div className="flex items-center justify-between gap-3">
                     <p className="font-medium text-slate-900">{deal.title}</p>
-                    <span className={`inline-flex px-3 py-1 rounded-full text-xs font-medium ${statusBadge(deal.stage)}`}>
+                    <span
+                      className={`inline-flex px-3 py-1 rounded-full text-xs font-medium ${statusBadge(deal.stage)}`}
+                    >
                       {deal.stage}
                     </span>
                   </div>
-                  <p className="text-slate-600 mt-2">${Number(deal.amount).toLocaleString()}</p>
-                  <p className="text-xs text-slate-500 mt-2">{formatDate(deal.created_at)}</p>
+                  <p className="text-slate-600 mt-2">
+                    ${Number(deal.amount).toLocaleString()}
+                  </p>
+                  <p className="text-xs text-slate-500 mt-2">
+                    {formatDate(deal.created_at)}
+                  </p>
                 </div>
               ))
             )}
           </div>
         </div>
 
-        <div className="rounded-2xl bg-white border border-slate-200 shadow-sm p-6">
-          <h3 className="text-lg font-semibold text-slate-900 mb-4">Tasks</h3>
-          <div className="space-y-3">
-            {clientTasks.length === 0 ? (
-              <p className="text-slate-500">No tasks yet.</p>
-            ) : (
-              clientTasks.map((task) => {
-                const assignedUser = getUser(task.user_id, users);
+        <div className="space-y-6">
+          <QuickTaskForm clientId={clientId} onCreated={handleTaskCreated} />
 
-                return (
-                  <div key={task.id} className="border border-slate-200 rounded-xl p-4">
-                    <div className="flex items-center justify-between gap-3">
-                      <p className="font-medium text-slate-900">{task.title}</p>
-                      <span className={`inline-flex px-3 py-1 rounded-full text-xs font-medium ${statusBadge(task.status)}`}>
-                        {task.status.replace("_", " ")}
-                      </span>
+          <div className="rounded-2xl bg-white border border-slate-200 shadow-sm p-6">
+            <h3 className="text-lg font-semibold text-slate-900 mb-4">Tasks</h3>
+            <div className="space-y-3">
+              {clientTasks.length === 0 ? (
+                <p className="text-slate-500">No tasks yet.</p>
+              ) : (
+                clientTasks.map((task) => {
+                  const assignedUser = getUser(task.user_id, users);
+
+                  return (
+                    <div
+                      key={task.id}
+                      className="border border-slate-200 rounded-xl p-4"
+                    >
+                      <div className="flex items-center justify-between gap-3">
+                        <p className="font-medium text-slate-900">
+                          {task.title}
+                        </p>
+                        <span
+                          className={`inline-flex px-3 py-1 rounded-full text-xs font-medium ${statusBadge(
+                            task.status,
+                          )}`}
+                        >
+                          {task.status.replace("_", " ")}
+                        </span>
+                      </div>
+                      <p className="text-slate-600 mt-2">
+                        {task.description || "-"}
+                      </p>
+                      <p className="text-xs text-slate-500 mt-2">
+                        Assigned: {assignedUser ? assignedUser.name : "-"}
+                      </p>
+                      <p className="text-xs text-slate-500 mt-1">
+                        Due: {task.due_date ? formatDate(task.due_date) : "-"}
+                      </p>
                     </div>
-                    <p className="text-slate-600 mt-2">{task.description || "-"}</p>
-                    <p className="text-xs text-slate-500 mt-2">
-                      Assigned: {assignedUser ? assignedUser.name : "-"}
-                    </p>
-                    <p className="text-xs text-slate-500 mt-1">
-                      Due: {task.due_date ? formatDate(task.due_date) : "-"}
-                    </p>
-                  </div>
-                );
-              })
-            )}
+                  );
+                })
+              )}
+            </div>
           </div>
         </div>
 
-        <div className="rounded-2xl bg-white border border-slate-200 shadow-sm p-6">
-          <h3 className="text-lg font-semibold text-slate-900 mb-4">Notes</h3>
-          <div className="space-y-3">
-            {clientNotes.length === 0 ? (
-              <p className="text-slate-500">No notes yet.</p>
-            ) : (
-              clientNotes.map((note) => {
-                const author = getUser(note.user_id, users);
+        <div className="space-y-6">
+          <QuickNoteForm clientId={clientId} onCreated={handleNoteCreated} />
 
-                return (
-                  <div key={note.id} className="border border-slate-200 rounded-xl p-4">
-                    <p className="text-slate-700">{note.text}</p>
-                    <p className="text-xs text-slate-500 mt-3">
-                      Author: {author ? author.name : "-"}
-                    </p>
-                    <p className="text-xs text-slate-500 mt-1">{formatDate(note.created_at)}</p>
-                  </div>
-                );
-              })
-            )}
+          <div className="rounded-2xl bg-white border border-slate-200 shadow-sm p-6">
+            <h3 className="text-lg font-semibold text-slate-900 mb-4">Notes</h3>
+            <div className="space-y-3">
+              {clientNotes.length === 0 ? (
+                <p className="text-slate-500">No notes yet.</p>
+              ) : (
+                clientNotes.map((note) => {
+                  const author = getUser(note.user_id, users);
+
+                  return (
+                    <div
+                      key={note.id}
+                      className="border border-slate-200 rounded-xl p-4"
+                    >
+                      <p className="text-slate-700">{note.text}</p>
+                      <p className="text-xs text-slate-500 mt-3">
+                        Author: {author ? author.name : "-"}
+                      </p>
+                      <p className="text-xs text-slate-500 mt-1">
+                        {formatDate(note.created_at)}
+                      </p>
+                    </div>
+                  );
+                })
+              )}
+            </div>
           </div>
         </div>
       </div>
+      {toast && <Toast message={toast.message} type={toast.type} />}
     </AppShell>
   );
 }

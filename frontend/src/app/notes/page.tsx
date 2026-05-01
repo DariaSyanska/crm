@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import AppShell from "@/components/AppShell";
 import DeleteConfirm from "@/components/DeleteConfirm";
@@ -23,12 +23,17 @@ export default function NotesPage() {
   const [notes, setNotes] = useState<Note[]>([]);
   const [clients, setClients] = useState<Client[]>([]);
   const [users, setUsers] = useState<User[]>([]);
+  const [currentUserId, setCurrentUserId] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
 
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [editingNote, setEditingNote] = useState<Note | null>(null);
   const [deletingNote, setDeletingNote] = useState<Note | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
+
+  const [search, setSearch] = useState("");
+  const [clientFilter, setClientFilter] = useState("all");
+  const [onlyMine, setOnlyMine] = useState(false);
 
   const [toast, setToast] = useState<{
     message: string;
@@ -75,6 +80,15 @@ export default function NotesPage() {
     }
   }, []);
 
+  const fetchCurrentUser = useCallback(async () => {
+    try {
+      const response = await api.get("/auth/me");
+      setCurrentUserId(response.data.id);
+    } catch (error) {
+      console.error("Failed to fetch current user:", error);
+    }
+  }, []);
+
   useEffect(() => {
     if (!getToken()) {
       router.push("/login");
@@ -84,7 +98,31 @@ export default function NotesPage() {
     fetchNotes();
     fetchClients();
     fetchUsers();
-  }, [router, fetchNotes, fetchClients, fetchUsers]);
+    fetchCurrentUser();
+  }, [router, fetchNotes, fetchClients, fetchUsers, fetchCurrentUser]);
+
+  const filteredNotes = useMemo(() => {
+    const query = search.trim().toLowerCase();
+
+    return notes.filter((note) => {
+      const client = clients.find((c) => c.id === note.client_id);
+      const user = users.find((u) => u.id === note.user_id);
+
+      const matchesClient =
+        clientFilter === "all" || String(note.client_id) === clientFilter;
+
+      const matchesMine = !onlyMine || note.user_id === currentUserId;
+
+      const matchesSearch =
+        query === "" ||
+        (note.text || "").toLowerCase().includes(query) ||
+        (client?.name || "").toLowerCase().includes(query) ||
+        (client?.company || "").toLowerCase().includes(query) ||
+        (user?.name || "").toLowerCase().includes(query);
+
+      return matchesClient && matchesMine && matchesSearch;
+    });
+  }, [notes, clients, users, clientFilter, onlyMine, currentUserId, search]);
 
   const handleCreated = async () => {
     await fetchNotes();
@@ -123,18 +161,66 @@ export default function NotesPage() {
       <StatsCards
         items={[
           { label: "Total Notes", value: notes.length },
-          { label: "Visible Notes", value: notes.length },
+          { label: "Visible", value: filteredNotes.length },
           { label: "Status", value: loading ? "Loading" : "Ready" },
         ]}
       />
 
       <PageActions buttonText="+ New Note" onClick={() => setIsCreateOpen(true)} />
 
+      <div className="mb-4">
+        <input
+          type="text"
+          placeholder="Search notes, clients, companies, users..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-blue-500"
+        />
+      </div>
+
+      <div className="mb-6 flex flex-wrap gap-2">
+        <button
+          onClick={() => setClientFilter("all")}
+          className={`rounded-xl px-4 py-2 text-sm font-medium transition ${
+            clientFilter === "all"
+              ? "bg-slate-900 text-white"
+              : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
+          }`}
+        >
+          All Clients
+        </button>
+
+        {clients.map((client) => (
+          <button
+            key={client.id}
+            onClick={() => setClientFilter(String(client.id))}
+            className={`rounded-xl px-4 py-2 text-sm font-medium transition ${
+              clientFilter === String(client.id)
+                ? "bg-blue-600 text-white"
+                : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
+            }`}
+          >
+            {client.name}
+          </button>
+        ))}
+
+        <button
+          onClick={() => setOnlyMine((prev) => !prev)}
+          className={`rounded-xl px-4 py-2 text-sm font-medium transition ${
+            onlyMine
+              ? "bg-purple-600 text-white"
+              : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
+          }`}
+        >
+          My Notes
+        </button>
+      </div>
+
       {loading ? (
         <p className="text-slate-500">Loading notes...</p>
       ) : (
         <NoteList
-          notes={notes}
+          notes={filteredNotes}
           clients={clients}
           users={users}
           onEdit={setEditingNote}

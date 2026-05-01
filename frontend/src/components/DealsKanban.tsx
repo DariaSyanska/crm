@@ -1,32 +1,14 @@
 import Link from "next/link";
 import { Client } from "@/types/client";
 import { Deal } from "@/types/deal";
+import DealStageBadge from "@/components/DealStageBadge";
 
-const stages = ["lead", "contacted", "negotiation", "won", "lost"];
-
-function getStageBadgeClasses(stage: string) {
-  switch (stage.toLowerCase()) {
-    case "lead":
-      return "bg-yellow-100 text-yellow-700";
-    case "contacted":
-      return "bg-blue-100 text-blue-700";
-    case "negotiation":
-      return "bg-purple-100 text-purple-700";
-    case "won":
-      return "bg-green-100 text-green-700";
-    case "lost":
-      return "bg-red-100 text-red-700";
-    default:
-      return "bg-slate-100 text-slate-700";
-  }
-}
+const stages = ["lead", "negotiation", "won", "lost"];
 
 function formatStage(stage: string) {
   switch (stage) {
     case "lead":
       return "Lead";
-    case "contacted":
-      return "Contacted";
     case "negotiation":
       return "Negotiation";
     case "won":
@@ -72,7 +54,9 @@ export default function DealsKanban({ deals, clients, onEdit, onDelete }: Props)
             className="rounded-2xl bg-slate-100 border border-slate-200 p-4"
           >
             <div className="flex items-center justify-between mb-4">
-              <h3 className="font-semibold text-slate-900">{formatStage(stage)}</h3>
+              <h3 className="font-semibold text-slate-900">
+                {formatStage(stage)}
+              </h3>
               <span className="text-xs bg-white border border-slate-200 rounded-full px-2 py-1 text-slate-600">
                 {stageDeals.length}
               </span>
@@ -100,13 +84,7 @@ export default function DealsKanban({ deals, clients, onEdit, onDelete }: Props)
                           </p>
                         </div>
 
-                        <span
-                          className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${getStageBadgeClasses(
-                            deal.stage
-                          )}`}
-                        >
-                          {formatStage(deal.stage)}
-                        </span>
+                        <DealStageBadge stage={deal.stage} />
                       </div>
 
                       <div className="mt-4 text-sm text-slate-700 space-y-1">

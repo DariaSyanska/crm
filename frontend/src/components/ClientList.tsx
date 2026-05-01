@@ -2,19 +2,8 @@ import Link from "next/link";
 import { Client } from "@/types/client";
 import { User } from "@/types/user";
 import Avatar from "@/components/ui/Avatar";
+import ClientStatusBadge from "@/components/ClientStatusBadge";
 
-function getStatusClasses(status: string) {
-  switch (status.toLowerCase()) {
-    case "new":
-      return "bg-blue-100 text-blue-700";
-    case "active":
-      return "bg-green-100 text-green-700";
-    case "inactive":
-      return "bg-slate-200 text-slate-700";
-    default:
-      return "bg-slate-100 text-slate-700";
-  }
-}
 
 function getManager(managerId: number | null | undefined, users: User[]) {
   if (!managerId) return null;
@@ -78,13 +67,7 @@ export default function ClientList({ clients, users, onEdit, onDelete }: Props) 
                   <td className="px-6 py-4 text-slate-600">{client.phone || "-"}</td>
 
                   <td className="px-6 py-4">
-                    <span
-                      className={`inline-flex px-3 py-1 rounded-full text-xs font-medium ${getStatusClasses(
-                        client.status
-                      )}`}
-                    >
-                      {client.status}
-                    </span>
+                    <ClientStatusBadge status={client.status} />
                   </td>
 
                   <td className="px-6 py-4 text-slate-600">
@@ -93,7 +76,6 @@ export default function ClientList({ clients, users, onEdit, onDelete }: Props) 
                         <Avatar name={manager.name} size="sm" />
                         <div>
                           <p className="text-slate-900 font-medium">{manager.name}</p>
-                          <p className="text-xs text-slate-500 capitalize">{manager.role}</p>
                         </div>
                       </div>
                     ) : (
