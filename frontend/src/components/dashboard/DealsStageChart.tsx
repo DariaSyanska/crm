@@ -38,10 +38,12 @@ export default function DealsStageChart({ deals }: Props) {
   });
 
   return (
-    <div className="min-w-0 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+    <div className="min-w-0 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-colors dark:border-slate-800 dark:bg-slate-900">
       <div className="mb-6">
-        <h3 className="text-lg font-semibold text-slate-900">Deals by Stage</h3>
-        <p className="mt-1 text-sm text-slate-500">
+        <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
+          Deals by Stage
+        </h3>
+        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
           Pipeline overview by deal status and potential value.
         </p>
       </div>
@@ -49,18 +51,23 @@ export default function DealsStageChart({ deals }: Props) {
       <div ref={ref} className="h-[320px] w-full min-w-0">
         {mounted && width > 0 ? (
           <BarChart width={width} height={320} data={data} barSize={36}>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} />
+            <CartesianGrid
+              strokeDasharray="3 3"
+              vertical={false}
+              stroke="currentColor"
+              className="text-slate-200 dark:text-slate-700"
+            />
             <XAxis
               dataKey="stage"
               tickLine={false}
               axisLine={false}
-              tick={{ fontSize: 12 }}
+              tick={{ fontSize: 12, fill: "#94a3b8" }}
             />
             <YAxis
               allowDecimals={false}
               tickLine={false}
               axisLine={false}
-              tick={{ fontSize: 12 }}
+              tick={{ fontSize: 12, fill: "#94a3b8" }}
             />
             <Tooltip
               formatter={(value, name) => {
@@ -73,13 +80,13 @@ export default function DealsStageChart({ deals }: Props) {
 
                 return [value, "Deals"];
               }}
-              labelStyle={{ fontWeight: 600 }}
+              labelStyle={{ fontWeight: 600, color: "#0f172a" }}
               contentStyle={{
                 borderRadius: "12px",
                 border: "1px solid #e2e8f0",
               }}
             />
-            <Bar dataKey="count" radius={[10, 10, 0, 0]} />
+            <Bar dataKey="count" radius={[10, 10, 0, 0]} fill="#3b82f6" />
           </BarChart>
         ) : null}
       </div>

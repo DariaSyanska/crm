@@ -23,56 +23,72 @@ type Props = {
   onComplete: (taskId: number) => void;
 };
 
-export default function TaskList({ tasks, clients, users, onEdit, onDelete, onComplete, }: Props) {
-  if (tasks.length === 0) {
-    return (
-      <div className="rounded-2xl bg-white border border-slate-200 shadow-sm p-10 text-center text-slate-500">
-        No tasks yet. Create your first task ✅
-      </div>
-    );
-  }
+export default function TaskList({
+  tasks,
+  clients,
+  users,
+  onEdit,
+  onDelete,
+  onComplete,
+}: Props) {
+  if (tasks.length === 0) return null;
 
   return (
-    <div className="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden">
+    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-colors dark:border-slate-800 dark:bg-slate-900">
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
-          <thead className="bg-slate-100 text-slate-600">
+          <thead className="bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300">
             <tr>
-              <th className="text-left px-6 py-4 font-semibold">Title</th>
-              <th className="text-left px-6 py-4 font-semibold">Description</th>
-              <th className="text-left px-6 py-4 font-semibold">Client</th>
-              <th className="text-left px-6 py-4 font-semibold">Assigned User</th>
-              <th className="text-left px-6 py-4 font-semibold">Status</th>
-              <th className="text-left px-6 py-4 font-semibold">Due Date</th>
-              <th className="text-left px-6 py-4 font-semibold">Actions</th>
+              <th className="px-6 py-4 text-left font-semibold">Title</th>
+              <th className="px-6 py-4 text-left font-semibold">Description</th>
+              <th className="px-6 py-4 text-left font-semibold">Client</th>
+              <th className="px-6 py-4 text-left font-semibold">
+                Assigned User
+              </th>
+              <th className="px-6 py-4 text-left font-semibold">Status</th>
+              <th className="px-6 py-4 text-left font-semibold">Due Date</th>
+              <th className="px-6 py-4 text-left font-semibold">Actions</th>
             </tr>
           </thead>
+
           <tbody>
             {tasks.map((task) => {
               const client = getClient(task.client_id, clients);
               const user = getUser(task.user_id, users);
+              const isOverdue =
+                task.due_date &&
+                new Date(task.due_date) < new Date() &&
+                task.status.toLowerCase() !== "done";
 
               return (
                 <tr
                   key={task.id}
-                  className="border-t border-slate-200 hover:bg-slate-50 transition"
+                  className="border-t border-slate-200 transition hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-800/70"
                 >
                   <td className="px-6 py-4">
-                    <div>
-                      <p className="font-medium text-slate-900">{task.title}</p>
-                      <p className="text-xs text-slate-500">Task #{task.id}</p>
-                    </div>
+                    <p className="font-medium text-slate-900 dark:text-slate-100">
+                      {task.title}
+                    </p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                      Task #{task.id}
+                    </p>
                   </td>
 
-                  <td className="px-6 py-4 text-slate-600">{task.description || "-"}</td>
+                  <td className="px-6 py-4 text-slate-600 dark:text-slate-300">
+                    {task.description || "-"}
+                  </td>
 
-                  <td className="px-6 py-4 text-slate-600">
+                  <td className="px-6 py-4 text-slate-600 dark:text-slate-300">
                     {client ? (
                       <div className="flex items-center gap-3">
                         <Avatar name={client.name} size="sm" />
                         <div>
-                          <p className="text-slate-900 font-medium">{client.name}</p>
-                          <p className="text-xs text-slate-500">{client.company || "No company"}</p>
+                          <p className="font-medium text-slate-900 dark:text-slate-100">
+                            {client.name}
+                          </p>
+                          <p className="text-xs text-slate-500 dark:text-slate-400">
+                            {client.company || "No company"}
+                          </p>
                         </div>
                       </div>
                     ) : (
@@ -80,13 +96,13 @@ export default function TaskList({ tasks, clients, users, onEdit, onDelete, onCo
                     )}
                   </td>
 
-                  <td className="px-6 py-4 text-slate-600">
+                  <td className="px-6 py-4 text-slate-600 dark:text-slate-300">
                     {user ? (
                       <div className="flex items-center gap-3">
                         <Avatar name={user.name} size="sm" />
-                        <div>
-                          <p className="text-slate-900 font-medium">{user.name}</p>
-                        </div>
+                        <p className="font-medium text-slate-900 dark:text-slate-100">
+                          {user.name}
+                        </p>
                       </div>
                     ) : (
                       "-"
@@ -101,16 +117,17 @@ export default function TaskList({ tasks, clients, users, onEdit, onDelete, onCo
                     {task.due_date ? (
                       <span
                         className={
-                        new Date(task.due_date) < new Date() &&
-                        task.status.toLowerCase() !== "done"
-                          ? "font-medium text-red-600"
-                          : "text-slate-700"
+                          isOverdue
+                            ? "font-medium text-red-600 dark:text-red-400"
+                            : "text-slate-700 dark:text-slate-300"
                         }
                       >
                         {new Date(task.due_date).toLocaleDateString()}
                       </span>
                     ) : (
-                      "-"
+                      <span className="text-slate-600 dark:text-slate-300">
+                        -
+                      </span>
                     )}
                   </td>
 
@@ -118,23 +135,26 @@ export default function TaskList({ tasks, clients, users, onEdit, onDelete, onCo
                     <div className="flex gap-2">
                       {task.status.toLowerCase() !== "done" && (
                         <button
+                          type="button"
                           onClick={() => onComplete(task.id)}
-                          className="px-3 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 transition text-xs font-medium"
+                          className="rounded-lg bg-green-600 px-3 py-2 text-xs font-medium text-white transition hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600"
                         >
                           Complete
                         </button>
                       )}
 
                       <button
+                        type="button"
                         onClick={() => onEdit(task)}
-                        className="px-3 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition text-xs font-medium"
+                        className="rounded-lg bg-blue-600 px-3 py-2 text-xs font-medium text-white transition hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
                       >
                         Edit
                       </button>
 
                       <button
+                        type="button"
                         onClick={() => onDelete(task)}
-                        className="px-3 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition text-xs font-medium"
+                        className="rounded-lg bg-red-600 px-3 py-2 text-xs font-medium text-white transition hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600"
                       >
                         Delete
                       </button>

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import AppShell from "@/components/AppShell";
 import DeleteConfirm from "@/components/DeleteConfirm";
 import EditNoteForm from "@/components/EditNoteForm";
+import EmptyState from "@/components/EmptyState";
 import Modal from "@/components/Modal";
 import NoteForm from "@/components/NoteForm";
 import NoteList from "@/components/NoteList";
@@ -40,7 +41,10 @@ export default function NotesPage() {
     type?: "success" | "error";
   } | null>(null);
 
-  const showToast = (message: string, type: "success" | "error" = "success") => {
+  const showToast = (
+    message: string,
+    type: "success" | "error" = "success",
+  ) => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 2500);
   };
@@ -149,7 +153,7 @@ export default function NotesPage() {
       console.error("Failed to delete note:", error);
       showToast(
         error?.response?.data?.detail || "Failed to delete note",
-        "error"
+        "error",
       );
     } finally {
       setDeleteLoading(false);
@@ -157,7 +161,10 @@ export default function NotesPage() {
   };
 
   return (
-    <AppShell title="Notes" subtitle="Store client notes and communication history.">
+    <AppShell
+      title="Notes"
+      subtitle="Store client notes and communication history."
+    >
       <StatsCards
         items={[
           { label: "Total Notes", value: notes.length },
@@ -166,7 +173,10 @@ export default function NotesPage() {
         ]}
       />
 
-      <PageActions buttonText="+ New Note" onClick={() => setIsCreateOpen(true)} />
+      <PageActions
+        buttonText="+ New Note"
+        onClick={() => setIsCreateOpen(true)}
+      />
 
       <div className="mb-4">
         <input
@@ -174,18 +184,19 @@ export default function NotesPage() {
           placeholder="Search notes, clients, companies, users..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-blue-500"
+          className="crm-input"
         />
       </div>
 
       <div className="mb-6 flex flex-wrap gap-2">
         <button
+          type="button"
           onClick={() => setClientFilter("all")}
-          className={`rounded-xl px-4 py-2 text-sm font-medium transition ${
+          className={
             clientFilter === "all"
-              ? "bg-slate-900 text-white"
-              : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
-          }`}
+              ? "crm-filter-button-active"
+              : "crm-filter-button"
+          }
         >
           All Clients
         </button>
@@ -193,31 +204,51 @@ export default function NotesPage() {
         {clients.map((client) => (
           <button
             key={client.id}
+            type="button"
             onClick={() => setClientFilter(String(client.id))}
-            className={`rounded-xl px-4 py-2 text-sm font-medium transition ${
+            className={
               clientFilter === String(client.id)
-                ? "bg-blue-600 text-white"
-                : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
-            }`}
+                ? "crm-filter-button-active"
+                : "crm-filter-button"
+            }
           >
             {client.name}
           </button>
         ))}
 
         <button
+          type="button"
           onClick={() => setOnlyMine((prev) => !prev)}
-          className={`rounded-xl px-4 py-2 text-sm font-medium transition ${
-            onlyMine
-              ? "bg-purple-600 text-white"
-              : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
-          }`}
+          className={
+            onlyMine ? "crm-filter-button-active" : "crm-filter-button"
+          }
         >
           My Notes
         </button>
       </div>
 
       {loading ? (
-        <p className="text-slate-500">Loading notes...</p>
+        <p className="text-slate-500 dark:text-slate-400">Loading notes...</p>
+      ) : filteredNotes.length === 0 ? (
+        <EmptyState
+          title={notes.length === 0 ? "No notes yet" : "No notes found"}
+          description={
+            notes.length === 0
+              ? "Create your first note to keep track of client communication."
+              : "Try changing your search, client filter, or My Notes filter."
+          }
+          action={
+            notes.length === 0 ? (
+              <button
+                type="button"
+                onClick={() => setIsCreateOpen(true)}
+                className="crm-primary-button"
+              >
+                + Create Note
+              </button>
+            ) : null
+          }
+        />
       ) : (
         <NoteList
           notes={filteredNotes}

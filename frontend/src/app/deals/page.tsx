@@ -164,65 +164,31 @@ export default function DealsPage() {
           placeholder="Search deals, clients, companies, stage, amount..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-blue-500"
+          className="crm-input"
         />
       </div>
 
       <div className="mb-6 flex flex-wrap gap-2">
-        <button
-          onClick={() => setStageFilter("all")}
-          className={`rounded-xl px-4 py-2 text-sm font-medium transition ${
-            stageFilter === "all"
-              ? "bg-slate-900 text-white"
-              : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
-          }`}
-        >
-          All
-        </button>
-
-        <button
-          onClick={() => setStageFilter("lead")}
-          className={`rounded-xl px-4 py-2 text-sm font-medium transition ${
-            stageFilter === "lead"
-              ? "bg-blue-600 text-white"
-              : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
-          }`}
-        >
-          Lead
-        </button>
-
-        <button
-          onClick={() => setStageFilter("negotiation")}
-          className={`rounded-xl px-4 py-2 text-sm font-medium transition ${
-            stageFilter === "negotiation"
-              ? "bg-orange-500 text-white"
-              : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
-          }`}
-        >
-          Negotiation
-        </button>
-
-        <button
-          onClick={() => setStageFilter("won")}
-          className={`rounded-xl px-4 py-2 text-sm font-medium transition ${
-            stageFilter === "won"
-              ? "bg-green-600 text-white"
-              : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
-          }`}
-        >
-          Won
-        </button>
-
-        <button
-          onClick={() => setStageFilter("lost")}
-          className={`rounded-xl px-4 py-2 text-sm font-medium transition ${
-            stageFilter === "lost"
-              ? "bg-red-600 text-white"
-              : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
-          }`}
-        >
-          Lost
-        </button>
+        {[
+          { value: "all", label: "All" },
+          { value: "lead", label: "Lead" },
+          { value: "negotiation", label: "Negotiation" },
+          { value: "won", label: "Won" },
+          { value: "lost", label: "Lost" },
+        ].map((item) => (
+          <button
+            key={item.value}
+            type="button"
+            onClick={() => setStageFilter(item.value)}
+            className={
+              stageFilter === item.value
+                ? "crm-filter-button-active"
+                : "crm-filter-button"
+            }
+          >
+            {item.label}
+          </button>
+        ))}
       </div>
 
       {loading ? (
@@ -240,7 +206,7 @@ export default function DealsPage() {
               <button
                 type="button"
                 onClick={() => setIsCreateOpen(true)}
-                className="rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-slate-700"
+                className="crm-primary-button"
               >
                 + Create Deal
               </button>
@@ -253,6 +219,7 @@ export default function DealsPage() {
           clients={clients}
           onEdit={setEditingDeal}
           onDelete={setDeletingDeal}
+          onStageChanged={fetchDeals}
         />
       )}
 

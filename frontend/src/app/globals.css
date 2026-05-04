@@ -16,3 +16,70 @@ body {
   min-height: 100vh;
   background: #020617;
 }
+
+@layer components {
+  .crm-card {
+    @apply rounded-2xl border border-slate-200 bg-white shadow-sm transition-colors
+    dark:border-slate-800 dark:bg-slate-900;
+  }
+
+  .crm-card-soft {
+    @apply rounded-2xl border border-slate-200 bg-slate-50 shadow-sm transition-colors
+    dark:border-slate-800 dark:bg-slate-900;
+  }
+
+  .crm-table {
+    @apply w-full text-sm;
+  }
+
+  .crm-table-head {
+    @apply bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300;
+  }
+
+  .crm-table-row {
+    @apply border-t border-slate-200 transition hover:bg-slate-50
+    dark:border-slate-800 dark:hover:bg-slate-800/70;
+  }
+
+  .crm-text-main {
+    @apply text-slate-900 dark:text-slate-100;
+  }
+
+  .crm-text-muted {
+    @apply text-slate-500 dark:text-slate-400;
+  }
+
+  .crm-input {
+    @apply w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm
+    text-slate-700 outline-none transition focus:border-blue-500
+    dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200
+    dark:placeholder:text-slate-500;
+  }
+
+  .crm-filter-button {
+    @apply rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium
+    text-slate-600 transition hover:bg-slate-50
+    dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300
+    dark:hover:bg-slate-700;
+  }
+
+  .crm-filter-button-active {
+    @apply rounded-xl bg-slate-900 px-4 py-2 text-sm font-medium text-white transition
+    dark:bg-white dark:text-slate-900;
+  }
+
+  .crm-primary-button {
+    @apply rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-medium text-white
+    transition hover:bg-blue-700;
+  }
+
+  .crm-danger-button {
+    @apply rounded-lg bg-red-600 px-3 py-2 text-xs font-medium text-white
+    transition hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600;
+  }
+
+  .crm-edit-button {
+    @apply rounded-lg bg-blue-600 px-3 py-2 text-xs font-medium text-white
+    transition hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600;
+  }
+}

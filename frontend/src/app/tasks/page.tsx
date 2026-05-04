@@ -201,62 +201,37 @@ export default function TasksPage() {
           placeholder="Search tasks, clients, companies, users..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-blue-500"
+          className="crm-input"
         />
       </div>
 
       <div className="mb-6 flex flex-wrap gap-2">
-        <button
-          onClick={() => setStatusFilter("all")}
-          className={`rounded-xl px-4 py-2 text-sm font-medium transition ${
-            statusFilter === "all"
-              ? "bg-slate-900 text-white"
-              : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
-          }`}
-        >
-          All
-        </button>
+        {[
+          { value: "all", label: "All" },
+          { value: "open", label: "Open" },
+          { value: "in_progress", label: "In Progress" },
+          { value: "done", label: "Done" },
+        ].map((item) => (
+          <button
+            key={item.value}
+            type="button"
+            onClick={() => setStatusFilter(item.value)}
+            className={
+              statusFilter === item.value
+                ? "crm-filter-button-active"
+                : "crm-filter-button"
+            }
+          >
+            {item.label}
+          </button>
+        ))}
 
         <button
-          onClick={() => setStatusFilter("open")}
-          className={`rounded-xl px-4 py-2 text-sm font-medium transition ${
-            statusFilter === "open"
-              ? "bg-blue-600 text-white"
-              : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
-          }`}
-        >
-          Open
-        </button>
-
-        <button
-          onClick={() => setStatusFilter("in_progress")}
-          className={`rounded-xl px-4 py-2 text-sm font-medium transition ${
-            statusFilter === "in_progress"
-              ? "bg-orange-500 text-white"
-              : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
-          }`}
-        >
-          In Progress
-        </button>
-
-        <button
-          onClick={() => setStatusFilter("done")}
-          className={`rounded-xl px-4 py-2 text-sm font-medium transition ${
-            statusFilter === "done"
-              ? "bg-green-600 text-white"
-              : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
-          }`}
-        >
-          Done
-        </button>
-
-        <button
+          type="button"
           onClick={() => setOnlyMine((prev) => !prev)}
-          className={`rounded-xl px-4 py-2 text-sm font-medium transition ${
-            onlyMine
-              ? "bg-purple-600 text-white"
-              : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
-          }`}
+          className={
+            onlyMine ? "crm-filter-button-active" : "crm-filter-button"
+          }
         >
           My Tasks
         </button>

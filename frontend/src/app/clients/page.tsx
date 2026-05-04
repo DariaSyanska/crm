@@ -160,7 +160,7 @@ export default function ClientsPage() {
           placeholder="Search clients, companies, email, phone, manager..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-blue-500"
+          className="crm-input"
         />
       </div>
 

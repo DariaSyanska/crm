@@ -1,13 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  PieChart,
-  Pie,
-  Cell,
-  Tooltip,
-  Legend,
-} from "recharts";
+import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
 import { Task } from "@/types/task";
 import { useChartSize } from "@/components/dashboard/useChartSize";
 
@@ -33,10 +27,12 @@ export default function TasksStatusChart({ tasks }: Props) {
   }));
 
   return (
-    <div className="rounded-2xl bg-white border border-slate-200 shadow-sm p-6 min-w-0">
-      <h3 className="text-lg font-semibold text-slate-900 mb-4">Tasks by Status</h3>
+    <div className="min-w-0 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-colors dark:border-slate-800 dark:bg-slate-900">
+      <h3 className="mb-4 text-lg font-semibold text-slate-900 dark:text-white">
+        Tasks by Status
+      </h3>
 
-      <div ref={ref} className="w-full h-[320px] min-w-0">
+      <div ref={ref} className="h-[320px] w-full min-w-0">
         {mounted && width > 0 ? (
           <PieChart width={width} height={320}>
             <Pie
@@ -46,14 +42,28 @@ export default function TasksStatusChart({ tasks }: Props) {
               outerRadius={90}
               cx="50%"
               cy="50%"
-              label
+              label={{ fill: "#94a3b8" }}
             >
               {data.map((entry, index) => (
                 <Cell key={entry.name} fill={COLORS[index % COLORS.length]} />
               ))}
             </Pie>
-            <Tooltip />
-            <Legend />
+
+            <Tooltip
+              contentStyle={{
+                borderRadius: "12px",
+                border: "1px solid #334155",
+                backgroundColor: "#0f172a",
+                color: "#f8fafc",
+              }}
+              labelStyle={{ color: "#f8fafc" }}
+            />
+
+            <Legend
+              wrapperStyle={{
+                color: "#94a3b8",
+              }}
+            />
           </PieChart>
         ) : null}
       </div>

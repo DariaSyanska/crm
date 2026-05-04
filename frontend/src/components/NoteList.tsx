@@ -12,7 +12,7 @@ function formatDate(dateString: string) {
 
   const date = new Date(normalized);
 
-  if (isNaN(date.getTime())) return "-";
+  if (Number.isNaN(date.getTime())) return "-";
 
   return date.toLocaleString("en-GB", {
     day: "2-digit",
@@ -40,28 +40,29 @@ type Props = {
   onDelete: (note: Note) => void;
 };
 
-export default function NoteList({ notes, clients, users, onEdit, onDelete }: Props) {
-  if (notes.length === 0) {
-    return (
-      <div className="rounded-2xl bg-white border border-slate-200 shadow-sm p-10 text-center text-slate-500">
-        No notes yet. Create your first note 📝
-      </div>
-    );
-  }
+export default function NoteList({
+  notes,
+  clients,
+  users,
+  onEdit,
+  onDelete,
+}: Props) {
+  if (notes.length === 0) return null;
 
   return (
-    <div className="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden">
+    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-colors dark:border-slate-800 dark:bg-slate-900">
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
-          <thead className="bg-slate-100 text-slate-600">
+          <thead className="bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300">
             <tr>
-              <th className="text-left px-6 py-4 font-semibold">Client</th>
-              <th className="text-left px-6 py-4 font-semibold">User</th>
-              <th className="text-left px-6 py-4 font-semibold">Text</th>
-              <th className="text-left px-6 py-4 font-semibold">Created</th>
-              <th className="text-left px-6 py-4 font-semibold">Actions</th>
+              <th className="px-6 py-4 text-left font-semibold">Client</th>
+              <th className="px-6 py-4 text-left font-semibold">User</th>
+              <th className="px-6 py-4 text-left font-semibold">Text</th>
+              <th className="px-6 py-4 text-left font-semibold">Created</th>
+              <th className="px-6 py-4 text-left font-semibold">Actions</th>
             </tr>
           </thead>
+
           <tbody>
             {notes.map((note) => {
               const client = getClient(note.client_id, clients);
@@ -70,15 +71,19 @@ export default function NoteList({ notes, clients, users, onEdit, onDelete }: Pr
               return (
                 <tr
                   key={note.id}
-                  className="border-t border-slate-200 hover:bg-slate-50 transition"
+                  className="border-t border-slate-200 transition hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-800/70"
                 >
-                  <td className="px-6 py-4 text-slate-600">
+                  <td className="px-6 py-4 text-slate-600 dark:text-slate-300">
                     {client ? (
                       <div className="flex items-center gap-3">
                         <Avatar name={client.name} size="sm" />
                         <div>
-                          <p className="text-slate-900 font-medium">{client.name}</p>
-                          <p className="text-xs text-slate-500">{client.company || "No company"}</p>
+                          <p className="font-medium text-slate-900 dark:text-slate-100">
+                            {client.name}
+                          </p>
+                          <p className="text-xs text-slate-500 dark:text-slate-400">
+                            {client.company || "No company"}
+                          </p>
                         </div>
                       </div>
                     ) : (
@@ -86,13 +91,17 @@ export default function NoteList({ notes, clients, users, onEdit, onDelete }: Pr
                     )}
                   </td>
 
-                  <td className="px-6 py-4 text-slate-600">
+                  <td className="px-6 py-4 text-slate-600 dark:text-slate-300">
                     {user ? (
                       <div className="flex items-center gap-3">
                         <Avatar name={user.name} size="sm" />
                         <div>
-                          <p className="text-slate-900 font-medium">{user.name}</p>
-                          <p className="text-xs text-slate-500 capitalize">{user.role}</p>
+                          <p className="font-medium text-slate-900 dark:text-slate-100">
+                            {user.name}
+                          </p>
+                          <p className="text-xs capitalize text-slate-500 dark:text-slate-400">
+                            {user.role}
+                          </p>
                         </div>
                       </div>
                     ) : (
@@ -100,25 +109,28 @@ export default function NoteList({ notes, clients, users, onEdit, onDelete }: Pr
                     )}
                   </td>
 
-                  <td className="px-6 py-4 text-slate-700 max-w-[420px]">
+                  <td className="max-w-[420px] px-6 py-4 text-slate-700 dark:text-slate-300">
                     <div className="line-clamp-2">{note.text}</div>
                   </td>
 
-                  <td className="px-6 py-4 text-slate-600">
+                  <td className="px-6 py-4 text-slate-600 dark:text-slate-300">
                     {formatDate(note.created_at)}
                   </td>
 
                   <td className="px-6 py-4">
                     <div className="flex gap-2">
                       <button
+                        type="button"
                         onClick={() => onEdit(note)}
-                        className="px-3 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition text-xs font-medium"
+                        className="rounded-lg bg-blue-600 px-3 py-2 text-xs font-medium text-white transition hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
                       >
                         Edit
                       </button>
+
                       <button
+                        type="button"
                         onClick={() => onDelete(note)}
-                        className="px-3 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition text-xs font-medium"
+                        className="rounded-lg bg-red-600 px-3 py-2 text-xs font-medium text-white transition hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600"
                       >
                         Delete
                       </button>
