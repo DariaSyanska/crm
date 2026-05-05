@@ -88,8 +88,10 @@ This project demonstrates a real-world SaaS architecture with authentication, an
 ![Landing](./screenshots/landing-2.png)
 
 ### Dashboard
-![Dashboard Light](./screenshots/dashboard-light.png)
-![Dashboard Dark](./screenshots/dashboard-dark.png)
+![Dashboard Light](./screenshots/dashboard-light-1.png)
+![Dashboard Light](./screenshots/dashboard-light-2.png)
+![Dashboard Dark](./screenshots/dashboard-dark-1.png)
+![Dashboard Dark](./screenshots/dashboard-dark-2.png)
 
 ### Deals (Kanban Drag & Drop)
 ![Deals Light](./screenshots/deals-kanban-light.png)
