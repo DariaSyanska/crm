@@ -8,9 +8,7 @@ This project demonstrates a real-world SaaS architecture with authentication, an
 
 ## 🌐 Live Demo
 
-> (добавишь после деплоя)
-
-- Frontend: https://your-app.vercel.app  
+- Frontend: https://crm-self-one.vercel.app
 - Backend API: https://your-api.onrender.com  
 
 ---
@@ -109,11 +107,11 @@ This project demonstrates a real-world SaaS architecture with authentication, an
 ![Notes Light](./screenshots/notes-light.png)
 ![Tasks Dark](./screenshots/notes-dark.png)
 
-### Empty State
-![Create New Deal](./screenshots/create-deal.png)
-![Create New Client](./screenshots/create-client.png)
-![Create New Task](./screenshots/create-task.png)
-![Create New Note](./screenshots/create-note.png)
+### Create Forms
+![Create Deal](./screenshots/create-deal.png)
+![Create Client](./screenshots/create-client.png)
+![Create Task](./screenshots/create-task.png)
+![Create Note](./screenshots/create-note.png)
 
 ---
 
