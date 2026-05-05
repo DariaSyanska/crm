@@ -1,15 +1,51 @@
-# 🚀 CRM SaaS (Frontend + Backend)
+# 🚀 CRM SaaS (Fullstack)
 
-Full-stack CRM application for managing clients, deals, tasks, and sales pipeline activity.
+![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)
+![FastAPI](https://img.shields.io/badge/FastAPI-Backend-009688?logo=fastapi)
+![TypeScript](https://img.shields.io/badge/TypeScript-Strict-blue?logo=typescript)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-DB-336791?logo=postgresql)
+![Vercel](https://img.shields.io/badge/Deployed-Vercel-black?logo=vercel)
 
-This project demonstrates a real-world SaaS architecture with authentication, analytics dashboard, drag-and-drop Kanban, and clean UI/UX.
+Full-stack CRM application for managing **clients, deals, tasks, and sales pipeline activity**.
+
+Built as a **modern SaaS-style product** with authentication, analytics dashboard, and drag-and-drop Kanban.
+
+👉 Designed as a production-like CRM system with real user flows and business logic.
 
 ---
 
 ## 🌐 Live Demo
 
-- Frontend: https://crm-self-one.vercel.app
-- Backend API: https://crm-b542.onrender.com
+👉 https://crm-self-one.vercel.app
+
+Backend API:  
+👉 https://crm-b542.onrender.com *(may take ~30s to wake up)*
+
+---
+
+<p align="center">
+  <a href="https://crm-self-one.vercel.app">
+    <img src="https://img.shields.io/badge/Open%20App-Live%20Demo-blue?style=for-the-badge" />
+  </a>
+</p>
+
+---
+
+## 🖥 Preview
+
+| Dashboard (Analytics) | Deals (Kanban) |
+|----------------------|---------------|
+| ![](./screenshots/dashboard-dark-1.png) | ![](./screenshots/deals-kanban-dark.png) |
+
+---
+
+## ✨ What you can do
+
+- Manage clients and relationships in one place  
+- Move deals across pipeline stages with drag & drop  
+- Track tasks and deadlines efficiently  
+- Store notes and communication history  
+- Monitor revenue and business performance via dashboard  
 
 ---
 
@@ -79,6 +115,30 @@ This project demonstrates a real-world SaaS architecture with authentication, an
 
 ---
 
+## 💡 Why This Project
+
+This project was built to simulate a real SaaS CRM system used by small teams to:
+
+- manage sales pipelines
+- track client interactions
+- organize tasks and notes
+- visualize business performance
+
+It focuses on **clean architecture, UX, and real-world product logic**.
+
+---
+
+## ⚡ Key Highlights
+
+- 🧩 Fullstack architecture (Next.js + FastAPI)
+- 📊 Real-time UI updates with API sync
+- 🎯 Drag & Drop Kanban (dnd-kit)
+- 🌙 Dark / Light mode
+- 📱 Fully responsive UI
+- 🔐 JWT authentication system
+
+---
+
 ## 📸 Screenshots
 
 ### Landing
@@ -105,7 +165,7 @@ This project demonstrates a real-world SaaS architecture with authentication, an
 
 ### Notes
 ![Notes Light](./screenshots/notes-light.png)
-![Tasks Dark](./screenshots/notes-dark.png)
+![Notes Dark](./screenshots/notes-dark.png)
 
 ### Create Forms
 ![Create Deal](./screenshots/create-deal.png)
@@ -119,18 +179,22 @@ This project demonstrates a real-world SaaS architecture with authentication, an
 
 ### 1. Clone repo
 
+```bash
 git clone https://github.com/DariaSyanska/crm.git 
 cd crm 
+```
 
 ---
 
 ### 2. Backend
 
+```bash
 cd backend 
 python3 -m venv .venv 
 source .venv/bin/activate 
 pip install -r requirements.txt 
 uvicorn app.main:app --reload 
+```
 
 Backend:
 http://127.0.0.1:8000
@@ -139,9 +203,11 @@ http://127.0.0.1:8000
 
 ### 3. Frontend
 
+```bash
 cd frontend 
 npm install 
 npm run dev 
+```
 
 Frontend:
 http://localhost:3000
@@ -152,50 +218,57 @@ http://localhost:3000
 
 ### Frontend (frontend/.env.local)
 
-NEXT_PUBLIC_API_URL=http://127.0.0.1:8000 
+```env
+NEXT_PUBLIC_API_URL=http://127.0.0.1:8000
+```
 
 ### Backend (backend/.env)
 
-SECRET_KEY=your-secret-key 
-DATABASE_URL=sqlite:///./crm.db 
+```env
+SECRET_KEY=your-secret-key
+DATABASE_URL=sqlite:///./crm.db
+```
 
 ---
 
-## 📡 API Overview
+## 📡 API Endpoints (Backend)
 
 ### Auth
-- POST /auth/login
-- POST /auth/register
-- GET /auth/me
+- POST `/auth/login`
+- POST `/auth/register`
+- GET `/auth/me`
 
 ### Clients
-- GET /clients/
-- POST /clients/
-- PUT /clients/{id}
-- DELETE /clients/{id}
+- GET `/clients/`
+- POST `/clients/`
+- PUT `/clients/{id}`
+- DELETE `/clients/{id}`
 
 ### Deals
-- GET /deals/
-- PUT /deals/{id} (used for drag & drop)
+- GET `/deals/`
+- PUT `/deals/{id}` - update stage (used for drag & drop)
 
 ### Tasks
-- GET /tasks/
-- PATCH /tasks/{id}/complete
+- GET `/tasks/`
+- PATCH `/tasks/{id}/complete`
 
 ### Notes
-- GET /notes/
+- GET `/notes/`
 
 ---
 
 ## 👤 Demo Account
 
-Email: admin@example.com
-Password: 123456
+Use the following credentials:
+
+- **Email:** `admin@example.com`
+- **Password:** `123456`
 
 ---
 
 ## 📁 Project Structure
 
+```bash
 crm/
 ├── backend/
 │   ├── app/
@@ -212,13 +285,16 @@ crm/
 │   └── .env.local
 │
 └── README.md
+```
 
 ---
 
 ## ✅ Production Build
 
+```bash
 cd frontend 
 npm run build 
+```
 
 ---
 
@@ -245,3 +321,15 @@ npm run build
 ## 📝 Notes
 
 This project is built for portfolio purposes and is not production-ready without additional security and scaling improvements.
+
+> ⚠️ Backend is hosted on Render and may take ~30 seconds to wake up on first request.
+
+---
+
+## 🙌 Author
+
+Daria Sianska  
+Frontend / Fullstack Developer  
+
+- GitHub: https://github.com/DariaSyanska
+- Portfolio: https://dariasyanska.github.io/portfolio/
