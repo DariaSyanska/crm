@@ -151,13 +151,13 @@ It focuses on **clean architecture, UX, and real-world product logic**.
 ![Dashboard Dark](./screenshots/dashboard-dark-1.png)
 ![Dashboard Dark](./screenshots/dashboard-dark-2.png)
 
-### Deals (Kanban Drag & Drop)
-![Deals Light](./screenshots/deals-kanban-light.png)
-![Deals Dark](./screenshots/deals-kanban-dark.png)
-
 ### Clients
 ![Clients Light](./screenshots/clients-light.png)
 ![Clients Dark](./screenshots/clients-dark.png)
+
+### Deals (Kanban Drag & Drop)
+![Deals Light](./screenshots/deals-kanban-light.png)
+![Deals Dark](./screenshots/deals-kanban-dark.png)
 
 ### Tasks
 ![Tasks Light](./screenshots/tasks-light.png)
@@ -168,10 +168,15 @@ It focuses on **clean architecture, UX, and real-world product logic**.
 ![Notes Dark](./screenshots/notes-dark.png)
 
 ### Create Forms
-![Create Deal](./screenshots/create-deal.png)
-![Create Client](./screenshots/create-client.png)
-![Create Task](./screenshots/create-task.png)
-![Create Note](./screenshots/create-note.png)
+![Create Client Lightt](./screenshots/create-client-light.png)
+![Create Client Dark](./screenshots/create-client-dark.png)
+![Create Deal Light](./screenshots/create-deal-light.png)
+![Create Deal Dark](./screenshots/create-deal-dark.png)
+![Create Task Light](./screenshots/create-task-light.png)
+![Create Task Dark](./screenshots/create-task-dark.png)
+![Create Note Light](./screenshots/create-note-light.png)
+![Create Note Dark](./screenshots/create-note-dark.png)
+
 
 ---
 
