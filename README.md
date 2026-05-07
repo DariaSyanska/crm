@@ -168,7 +168,7 @@ It focuses on **clean architecture, UX, and real-world product logic**.
 ![Notes Dark](./frontend/public/screenshots/notes-dark.png)
 
 ### Create Forms
-![Create Client Lightt](./frontend/public/screenshots/create-client-light.png)
+![Create Client Light](./frontend/public/screenshots/create-client-light.png)
 ![Create Client Dark](./frontend/public/screenshots/create-client-dark.png)
 ![Create Deal Light](./frontend/public/screenshots/create-deal-light.png)
 ![Create Deal Dark](./frontend/public/screenshots/create-deal-dark.png)
