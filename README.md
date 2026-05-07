@@ -39,6 +39,9 @@ Backend API:
 ## Deals
 ![Deals](./frontend/public/screenshots/deals-kanban-dark.png)
 
+## 🎬 Demo Video
+[Watch Demo](./frontend/public/screenshots/crm-demo.mp4)
+
 ---
 
 ## ✨ What you can do
@@ -138,6 +141,15 @@ It focuses on **clean architecture, UX, and real-world product logic**.
 - 🌙 Dark / Light mode
 - 📱 Fully responsive UI
 - 🔐 JWT authentication system
+
+---
+
+## 🧩 Challenges
+
+- Implemented drag-and-drop pipeline sync with optimistic UI updates
+- Built reusable modal system with animated transitions
+- Solved responsive chart rendering issues in Recharts
+- Designed scalable dashboard card architecture
 
 ---
 
