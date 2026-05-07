@@ -39,10 +39,6 @@ Backend API:
 ## Deals
 ![Deals](./frontend/public/screenshots/deals-kanban-dark.png)
 
-## 🎬 Product Walkthrough
-Experience the CRM workflow including dashboard analytics, Kanban pipeline, task management, modal animations, and responsive UI interactions.
-👉 [Watch Full Demo](https://drive.google.com/file/d/12zo5HYDrMnIXcO_Ah4pHvNWdTnb9akZr/view?usp=sharing)
-
 ---
 
 ## ✨ What you can do
