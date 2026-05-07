@@ -39,8 +39,8 @@ Backend API:
 ## Deals
 ![Deals](./frontend/public/screenshots/deals-kanban-dark.png)
 
-## 🎬 Demo Video
-[Watch Demo](./frontend/public/screenshots/crm-demo.mp4)
+## 📹 Full Demo Video
+[Watch Full Demo](https://drive.google.com/file/d/12zo5HYDrMnIXcO_Ah4pHvNWdTnb9akZr/view?usp=sharing)
 
 ---
 
