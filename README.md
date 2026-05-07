@@ -33,9 +33,11 @@ Backend API:
 
 ## 🖥 Preview
 
-| Dashboard (Analytics) | Deals (Kanban) |
-|----------------------|---------------|
-| ![](./frontend/public/screenshots/dashboard-dark-1.png) | ![](./frontend/public/screenshots/deals-kanban-dark.png) |
+## Dashboard
+![Dashboard](./frontend/public/screenshots/dashboard-dark-1.png)
+
+## Deals
+![Deals](./frontend/public/screenshots/deals-kanban-dark.png)
 
 ---
 
