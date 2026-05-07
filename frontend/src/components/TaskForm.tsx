@@ -8,6 +8,15 @@ type Props = {
   onCreated: () => void;
 };
 
+const inputClassName =
+  "h-16 w-full rounded-2xl border border-slate-300 bg-white px-5 text-lg text-slate-900 placeholder:text-slate-400 outline-none transition-all duration-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-950/60 dark:text-white dark:placeholder:text-slate-500";
+
+const selectClassName =
+  "h-16 w-full rounded-2xl border border-slate-300 bg-white px-5 text-lg text-slate-900 outline-none transition-all duration-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-950/60 dark:text-white";
+
+const textareaClassName =
+  "min-h-[140px] w-full rounded-2xl border border-slate-300 bg-white p-5 text-lg text-slate-900 placeholder:text-slate-400 outline-none transition-all duration-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-950/60 dark:text-white dark:placeholder:text-slate-500";
+
 export default function TaskForm({ onCreated }: Props) {
   const [clients, setClients] = useState<Client[]>([]);
   const [title, setTitle] = useState("");
@@ -48,9 +57,11 @@ export default function TaskForm({ onCreated }: Props) {
       setDueDate("");
       setStatus("open");
       setClientId("");
+
       onCreated();
     } catch (error: any) {
       console.error("Failed to create task:", error);
+
       alert(error?.response?.data?.detail || "Failed to create task");
     } finally {
       setLoading(false);
@@ -61,7 +72,7 @@ export default function TaskForm({ onCreated }: Props) {
     <form onSubmit={handleSubmit}>
       <div className="grid gap-4 md:grid-cols-2">
         <input
-          className="w-full border border-slate-300 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+          className={inputClassName}
           placeholder="Task title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
@@ -69,7 +80,7 @@ export default function TaskForm({ onCreated }: Props) {
         />
 
         <select
-          className="w-full border border-slate-300 rounded-xl px-4 py-3 bg-white outline-none focus:ring-2 focus:ring-blue-500"
+          className={selectClassName}
           value={status}
           onChange={(e) => setStatus(e.target.value)}
         >
@@ -79,11 +90,12 @@ export default function TaskForm({ onCreated }: Props) {
         </select>
 
         <select
-          className="w-full border border-slate-300 rounded-xl px-4 py-3 bg-white outline-none focus:ring-2 focus:ring-blue-500"
+          className={selectClassName}
           value={clientId}
           onChange={(e) => setClientId(e.target.value)}
         >
           <option value="">No client</option>
+
           {clients.map((client) => (
             <option key={client.id} value={client.id}>
               {client.name}
@@ -93,13 +105,13 @@ export default function TaskForm({ onCreated }: Props) {
 
         <input
           type="datetime-local"
-          className="w-full border border-slate-300 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+          className={inputClassName}
           value={dueDate}
           onChange={(e) => setDueDate(e.target.value)}
         />
 
         <textarea
-          className="w-full border border-slate-300 rounded-xl px-4 py-3 min-h-[140px] outline-none focus:ring-2 focus:ring-blue-500 md:col-span-2"
+          className={`${textareaClassName} md:col-span-2`}
           placeholder="Task description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
@@ -110,7 +122,17 @@ export default function TaskForm({ onCreated }: Props) {
         <button
           type="submit"
           disabled={loading}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl transition shadow font-medium"
+          className="
+          rounded-xl bg-blue-600 px-5 py-3
+          font-medium text-white shadow
+          transition-all duration-200
+
+          hover:bg-blue-700
+          hover:scale-[1.02]
+
+          disabled:cursor-not-allowed
+          disabled:opacity-60
+          "
         >
           {loading ? "Creating..." : "Create Task"}
         </button>

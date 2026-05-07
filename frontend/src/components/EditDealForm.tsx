@@ -10,6 +10,12 @@ type Props = {
   onUpdated: () => void;
 };
 
+const inputClassName =
+  "h-16 w-full rounded-2xl border border-slate-300 bg-white px-5 text-lg text-slate-900 placeholder:text-slate-400 outline-none transition-all duration-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-950/60 dark:text-white dark:placeholder:text-slate-500";
+
+const selectClassName =
+  "h-16 w-full rounded-2xl border border-slate-300 bg-white px-5 text-lg text-slate-900 outline-none transition-all duration-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-950/60 dark:text-white";
+
 export default function EditDealForm({ deal, onUpdated }: Props) {
   const [clients, setClients] = useState<Client[]>([]);
   const [clientId, setClientId] = useState(String(deal.client_id));
@@ -33,6 +39,7 @@ export default function EditDealForm({ deal, onUpdated }: Props) {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+
     setLoading(true);
 
     try {
@@ -46,6 +53,7 @@ export default function EditDealForm({ deal, onUpdated }: Props) {
       onUpdated();
     } catch (error: any) {
       console.error("Failed to update deal:", error);
+
       alert(error?.response?.data?.detail || "Failed to update deal");
     } finally {
       setLoading(false);
@@ -56,12 +64,13 @@ export default function EditDealForm({ deal, onUpdated }: Props) {
     <form onSubmit={handleSubmit}>
       <div className="grid gap-4 md:grid-cols-2">
         <select
-          className="w-full border border-slate-300 rounded-xl px-4 py-3 bg-white outline-none focus:ring-2 focus:ring-blue-500"
+          className={selectClassName}
           value={clientId}
           onChange={(e) => setClientId(e.target.value)}
           required
         >
           <option value="">Select client</option>
+
           {clients.map((client) => (
             <option key={client.id} value={client.id}>
               {client.name} ({client.company || "No company"})
@@ -70,7 +79,7 @@ export default function EditDealForm({ deal, onUpdated }: Props) {
         </select>
 
         <input
-          className="w-full border border-slate-300 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+          className={inputClassName}
           placeholder="Deal title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
@@ -79,7 +88,7 @@ export default function EditDealForm({ deal, onUpdated }: Props) {
 
         <input
           type="number"
-          className="w-full border border-slate-300 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+          className={inputClassName}
           placeholder="Amount"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
@@ -87,7 +96,7 @@ export default function EditDealForm({ deal, onUpdated }: Props) {
         />
 
         <select
-          className="w-full border border-slate-300 rounded-xl px-4 py-3 bg-white outline-none focus:ring-2 focus:ring-blue-500"
+          className={selectClassName}
           value={stage}
           onChange={(e) => setStage(e.target.value)}
         >
@@ -103,7 +112,17 @@ export default function EditDealForm({ deal, onUpdated }: Props) {
         <button
           type="submit"
           disabled={loading}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl transition shadow font-medium"
+          className="
+            rounded-xl bg-blue-600 px-5 py-3
+            font-medium text-white shadow
+            transition-all duration-200
+
+            hover:scale-[1.02]
+            hover:bg-blue-700
+
+            disabled:cursor-not-allowed
+            disabled:opacity-60
+          "
         >
           {loading ? "Saving..." : "Save Changes"}
         </button>

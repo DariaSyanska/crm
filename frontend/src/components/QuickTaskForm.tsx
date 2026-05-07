@@ -8,19 +8,31 @@ type Props = {
   onCreated: () => Promise<void> | void;
 };
 
+const inputClassName =
+  "h-16 w-full rounded-2xl border border-slate-300 bg-white px-5 text-lg text-slate-900 placeholder:text-slate-400 outline-none transition-all duration-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-950/60 dark:text-white dark:placeholder:text-slate-500";
+
+const textareaClassName =
+  "min-h-[140px] w-full rounded-2xl border border-slate-300 bg-white p-5 text-lg text-slate-900 placeholder:text-slate-400 outline-none transition-all duration-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-950/60 dark:text-white dark:placeholder:text-slate-500";
+
 export default function QuickTaskForm({ clientId, onCreated }: Props) {
   const [title, setTitle] = useState("");
+
   const [description, setDescription] = useState("");
+
   const [dueDate, setDueDate] = useState("");
+
   const [loading, setLoading] = useState(false);
+
   const [error, setError] = useState("");
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
+
     setError("");
 
     if (!title.trim()) {
       setError("Task title cannot be empty");
+
       return;
     }
 
@@ -38,6 +50,7 @@ export default function QuickTaskForm({ clientId, onCreated }: Props) {
       setTitle("");
       setDescription("");
       setDueDate("");
+
       await onCreated();
     } catch (err: any) {
       setError(err?.response?.data?.detail || "Failed to create task");
@@ -49,11 +62,20 @@ export default function QuickTaskForm({ clientId, onCreated }: Props) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="rounded-2xl bg-white border border-slate-200 shadow-sm p-6"
+      className="
+        rounded-3xl border border-slate-200
+        bg-white p-6 shadow-sm
+
+        dark:border-slate-800
+        dark:bg-slate-900
+      "
     >
-      <div className="mb-4">
-        <h3 className="text-lg font-semibold text-slate-900">Quick Add Task</h3>
-        <p className="mt-1 text-sm text-slate-500">
+      <div className="mb-5">
+        <h3 className="text-xl font-bold text-slate-900 dark:text-white">
+          Quick Add Task
+        </h3>
+
+        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
           Create a task for this client without leaving the page.
         </p>
       </div>
@@ -64,32 +86,43 @@ export default function QuickTaskForm({ clientId, onCreated }: Props) {
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Task title"
-          className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-blue-500"
+          className={inputClassName}
         />
 
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="Task description"
-          rows={4}
-          className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-blue-500"
+          className={textareaClassName}
         />
 
         <input
           type="datetime-local"
           value={dueDate}
           onChange={(e) => setDueDate(e.target.value)}
-          className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-blue-500"
+          className={inputClassName}
         />
       </div>
 
-      {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
+      {error && (
+        <p className="mt-4 text-sm font-medium text-red-500">{error}</p>
+      )}
 
-      <div className="mt-4 flex justify-end">
+      <div className="mt-6 flex justify-end">
         <button
           type="submit"
           disabled={loading}
-          className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:opacity-70"
+          className="
+            rounded-xl bg-blue-600 px-5 py-3
+            font-medium text-white shadow
+            transition-all duration-200
+
+            hover:scale-[1.02]
+            hover:bg-blue-700
+
+            disabled:cursor-not-allowed
+            disabled:opacity-60
+          "
         >
           {loading ? "Saving..." : "Add Task"}
         </button>

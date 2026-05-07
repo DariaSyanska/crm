@@ -1,9 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { BarChart, Bar, CartesianGrid, Tooltip, XAxis, YAxis } from "recharts";
-import { Deal } from "@/types/deal";
 import { useChartSize } from "@/components/dashboard/useChartSize";
+import {
+  BarChart,
+  Bar,
+  CartesianGrid,
+  Tooltip,
+  XAxis,
+  YAxis,
+  ResponsiveContainer,
+} from "recharts";
+import { Deal } from "@/types/deal";
 
 type Props = {
   deals: Deal[];
@@ -14,12 +22,39 @@ const stages = ["lead", "contacted", "negotiation", "won", "lost"];
 const formatStage = (stage: string) =>
   stage.charAt(0).toUpperCase() + stage.slice(1);
 
+type TooltipProps = {
+  active?: boolean;
+  payload?: any[];
+  label?: string;
+};
+
+function CustomTooltip({ active, payload, label }: TooltipProps) {
+  if (!active || !payload?.length) return null;
+
+  const item = payload[0].payload;
+
+  return (
+    <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-lg dark:border-slate-700 dark:bg-slate-950">
+      <p className="font-semibold text-slate-900 dark:text-white">{label}</p>
+      <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+        Deals: <span className="font-medium text-blue-600">{item.count}</span>
+      </p>
+      <p className="text-sm text-slate-500 dark:text-slate-400">
+        Value:{" "}
+        <span className="font-medium text-green-600">
+          ${item.value.toLocaleString()}
+        </span>
+      </p>
+    </div>
+  );
+}
+
 export default function DealsStageChart({ deals }: Props) {
   const [mounted, setMounted] = useState(false);
-  const { ref, width } = useChartSize();
 
   useEffect(() => {
-    setMounted(true);
+    const timer = setTimeout(() => setMounted(true), 150);
+    return () => clearTimeout(timer);
   }, []);
 
   const data = stages.map((stage) => {
@@ -48,46 +83,63 @@ export default function DealsStageChart({ deals }: Props) {
         </p>
       </div>
 
-      <div ref={ref} className="h-[320px] w-full min-w-0">
-        {mounted && width > 0 ? (
-          <BarChart width={width} height={320} data={data} barSize={36}>
-            <CartesianGrid
-              strokeDasharray="3 3"
-              vertical={false}
-              stroke="currentColor"
-              className="text-slate-200 dark:text-slate-700"
-            />
-            <XAxis
-              dataKey="stage"
-              tickLine={false}
-              axisLine={false}
-              tick={{ fontSize: 12, fill: "#94a3b8" }}
-            />
-            <YAxis
-              allowDecimals={false}
-              tickLine={false}
-              axisLine={false}
-              tick={{ fontSize: 12, fill: "#94a3b8" }}
-            />
-            <Tooltip
-              formatter={(value, name) => {
-                if (name === "value") {
-                  return [
-                    `$${Number(value).toLocaleString("en-US")}`,
-                    "Pipeline value",
-                  ];
-                }
+      <div className="h-[320px] w-full">
+        {mounted ? (
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={data} barSize={38}>
+              <defs>
+                <linearGradient
+                  id="dealBarGradient"
+                  x1="0"
+                  y1="0"
+                  x2="0"
+                  y2="1"
+                >
+                  <stop offset="0%" stopColor="#60a5fa" />
+                  <stop offset="100%" stopColor="#2563eb" />
+                </linearGradient>
+              </defs>
 
-                return [value, "Deals"];
-              }}
-              labelStyle={{ fontWeight: 600, color: "#0f172a" }}
-              contentStyle={{
-                borderRadius: "12px",
-                border: "1px solid #e2e8f0",
-              }}
-            />
-            <Bar dataKey="count" radius={[10, 10, 0, 0]} fill="#3b82f6" />
-          </BarChart>
+              <CartesianGrid
+                strokeDasharray="3 3"
+                vertical={false}
+                stroke="currentColor"
+                className="text-slate-200 dark:text-slate-700"
+              />
+
+              <XAxis
+                dataKey="stage"
+                tickLine={false}
+                axisLine={false}
+                tick={{ fontSize: 12, fill: "currentColor" }}
+                className="text-slate-500 dark:text-slate-400"
+              />
+
+              <YAxis
+                allowDecimals={false}
+                tickLine={false}
+                axisLine={false}
+                tick={{ fontSize: 12, fill: "currentColor" }}
+                className="text-slate-500 dark:text-slate-400"
+              />
+
+              <Tooltip
+                cursor={{
+                  fill: "rgba(148, 163, 184, 0.16)",
+                  radius: 12,
+                }}
+                content={<CustomTooltip />}
+              />
+
+              <Bar
+                dataKey="count"
+                fill="url(#dealBarGradient)"
+                radius={[12, 12, 0, 0]}
+                animationDuration={900}
+                animationEasing="ease-out"
+              />
+            </BarChart>
+          </ResponsiveContainer>
         ) : null}
       </div>
     </div>
