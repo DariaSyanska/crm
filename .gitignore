@@ -32,4 +32,5 @@ yarn-error.log*
 __MACOSX/
 
 # VS Code
-.vscode/
+.vscode/*.MP4
+*.mp4
