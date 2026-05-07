@@ -4,22 +4,24 @@ import { useEffect, useRef, useState } from "react";
 
 export function useChartSize() {
   const ref = useRef<HTMLDivElement | null>(null);
-  const [width, setWidth] = useState(0);
+  const [width, setWidth] = useState(300);
 
   useEffect(() => {
-    if (!ref.current) return;
-
     const element = ref.current;
+    if (!element) return;
 
-    const observer = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        const newWidth = entry.contentRect.width;
-        if (newWidth > 0) {
-          setWidth(newWidth);
-        }
+    const updateWidth = () => {
+      const rect = element.getBoundingClientRect();
+      const nextWidth = Math.floor(rect.width);
+
+      if (nextWidth > 0) {
+        setWidth(nextWidth);
       }
-    });
+    };
 
+    updateWidth();
+
+    const observer = new ResizeObserver(updateWidth);
     observer.observe(element);
 
     return () => observer.disconnect();

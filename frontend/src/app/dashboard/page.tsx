@@ -96,21 +96,29 @@ export default function DashboardPage() {
                 label: "Total Clients",
                 value: clients.length,
                 helper: "All clients in your CRM",
+                trend: "+ New relationships tracked",
+                tone: "blue",
               },
               {
                 label: "Active Deals",
                 value: activeDeals.length,
                 helper: "Open pipeline opportunities",
+                trend: "Pipeline in progress",
+                tone: "purple",
               },
               {
                 label: "Revenue",
                 value: formatCurrency(wonRevenue),
                 helper: "Total from won deals",
+                trend: "+ Won revenue",
+                tone: "green",
               },
               {
                 label: "Tasks Due Today",
                 value: tasksDueToday,
                 helper: "Open tasks for today",
+                trend: tasksDueToday > 0 ? "Needs attention" : "All clear",
+                tone: tasksDueToday > 0 ? "orange" : "green",
               },
             ]}
           />
