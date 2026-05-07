@@ -35,7 +35,7 @@ Backend API:
 
 | Dashboard (Analytics) | Deals (Kanban) |
 |----------------------|---------------|
-| ![](./screenshots/dashboard-dark-1.png) | ![](./screenshots/deals-kanban-dark.png) |
+| ![](./frontend/public/screenshots/dashboard-dark-1.png) | ![](./frontend/public/screenshots/deals-kanban-dark.png) |
 
 ---
 
@@ -142,40 +142,40 @@ It focuses on **clean architecture, UX, and real-world product logic**.
 ## 📸 Screenshots
 
 ### Landing
-![Landing](./screenshots/landing-1.png)
-![Landing](./screenshots/landing-2.png)
+![Landing](./frontend/public/screenshots/landing-1.png)
+![Landing](./frontend/public/screenshots/landing-2.png)
 
 ### Dashboard
-![Dashboard Light](./screenshots/dashboard-light-1.png)
-![Dashboard Light](./screenshots/dashboard-light-2.png)
-![Dashboard Dark](./screenshots/dashboard-dark-1.png)
-![Dashboard Dark](./screenshots/dashboard-dark-2.png)
+![Dashboard Light](./frontend/public/screenshots/dashboard-light-1.png)
+![Dashboard Light](./frontend/public/screenshots/dashboard-light-2.png)
+![Dashboard Dark](./frontend/public/screenshots/dashboard-dark-1.png)
+![Dashboard Dark](./frontend/public/screenshots/dashboard-dark-2.png)
 
 ### Clients
-![Clients Light](./screenshots/clients-light.png)
-![Clients Dark](./screenshots/clients-dark.png)
+![Clients Light](./frontend/public/screenshots/clients-light.png)
+![Clients Dark](./frontend/public/screenshots/clients-dark.png)
 
 ### Deals (Kanban Drag & Drop)
-![Deals Light](./screenshots/deals-kanban-light.png)
-![Deals Dark](./screenshots/deals-kanban-dark.png)
+![Deals Light](./frontend/public/screenshots/deals-kanban-light.png)
+![Deals Dark](./frontend/public/screenshots/deals-kanban-dark.png)
 
 ### Tasks
-![Tasks Light](./screenshots/tasks-light.png)
-![Tasks Dark](./screenshots/tasks-dark.png)
+![Tasks Light](./frontend/public/screenshots/tasks-light.png)
+![Tasks Dark](./frontend/public/screenshots/tasks-dark.png)
 
 ### Notes
-![Notes Light](./screenshots/notes-light.png)
-![Notes Dark](./screenshots/notes-dark.png)
+![Notes Light](./frontend/public/screenshots/notes-light.png)
+![Notes Dark](./frontend/public/screenshots/notes-dark.png)
 
 ### Create Forms
-![Create Client Lightt](./screenshots/create-client-light.png)
-![Create Client Dark](./screenshots/create-client-dark.png)
-![Create Deal Light](./screenshots/create-deal-light.png)
-![Create Deal Dark](./screenshots/create-deal-dark.png)
-![Create Task Light](./screenshots/create-task-light.png)
-![Create Task Dark](./screenshots/create-task-dark.png)
-![Create Note Light](./screenshots/create-note-light.png)
-![Create Note Dark](./screenshots/create-note-dark.png)
+![Create Client Lightt](./frontend/public/screenshots/create-client-light.png)
+![Create Client Dark](./frontend/public/screenshots/create-client-dark.png)
+![Create Deal Light](./frontend/public/screenshots/create-deal-light.png)
+![Create Deal Dark](./frontend/public/screenshots/create-deal-dark.png)
+![Create Task Light](./frontend/public/screenshots/create-task-light.png)
+![Create Task Dark](./frontend/public/screenshots/create-task-dark.png)
+![Create Note Light](./frontend/public/screenshots/create-note-light.png)
+![Create Note Dark](./frontend/public/screenshots/create-note-dark.png)
 
 
 ---
