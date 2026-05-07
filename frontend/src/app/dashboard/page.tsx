@@ -98,6 +98,7 @@ export default function DashboardPage() {
                 helper: "All clients in your CRM",
                 trend: "+ New relationships tracked",
                 tone: "blue",
+                icon: "clients",
               },
               {
                 label: "Active Deals",
@@ -105,6 +106,7 @@ export default function DashboardPage() {
                 helper: "Open pipeline opportunities",
                 trend: "Pipeline in progress",
                 tone: "purple",
+                icon: "deals",
               },
               {
                 label: "Revenue",
@@ -112,6 +114,7 @@ export default function DashboardPage() {
                 helper: "Total from won deals",
                 trend: "+ Won revenue",
                 tone: "green",
+                icon: "revenue",
               },
               {
                 label: "Tasks Due Today",
@@ -119,6 +122,7 @@ export default function DashboardPage() {
                 helper: "Open tasks for today",
                 trend: tasksDueToday > 0 ? "Needs attention" : "All clear",
                 tone: tasksDueToday > 0 ? "orange" : "green",
+                icon: "tasks",
               },
             ]}
           />
