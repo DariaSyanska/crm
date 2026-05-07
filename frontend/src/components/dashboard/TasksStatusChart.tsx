@@ -73,6 +73,7 @@ export default function TasksStatusChart({ tasks }: Props) {
   });
 
   const hasData = data.some((item) => item.value > 0);
+  const chartWidth = Math.max(width || 0, 300);
 
   return (
     <div className="min-w-0 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-colors dark:border-slate-800 dark:bg-slate-900">
@@ -86,10 +87,13 @@ export default function TasksStatusChart({ tasks }: Props) {
         </p>
       </div>
 
-      <div ref={ref} className="h-[320px] w-full min-w-0">
-        {mounted && width > 0 ? (
+      <div
+        ref={ref}
+        className="relative h-[320px] w-full min-w-0 overflow-hidden"
+      >
+        {mounted ? (
           hasData ? (
-            <PieChart width={width} height={320}>
+            <PieChart width={chartWidth} height={320}>
               <Pie
                 data={data}
                 dataKey="value"
