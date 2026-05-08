@@ -25,11 +25,8 @@ Built with Next.js, FastAPI, PostgreSQL, and modern SaaS UI patterns.
 
 ## 🌐 Live Demo
 
-Frontend:
-https://crm-self-one.vercel.app
-
-Backend API:
-https://crm-b542.onrender.com
+- Frontend: https://crm-self-one.vercel.app
+- Backend API: https://crm-b542.onrender.com
 
 ---
 
