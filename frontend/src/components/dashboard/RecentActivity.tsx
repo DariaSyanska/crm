@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Client } from "@/types/client";
 import { Deal } from "@/types/deal";
 import { Task } from "@/types/task";
+import { formatDistanceToNow } from "date-fns";
 
 type ActivityType = "Client" | "Deal" | "Task";
 
@@ -22,17 +23,18 @@ type Props = {
   tasks: Task[];
 };
 
-const formatDate = (date?: string | null) => {
-  if (!date) return "No date";
+const formatRelativeTime = (date?: string | null) => {
+  if (!date) return "Recently";
 
   const parsedDate = new Date(date);
 
-  if (Number.isNaN(parsedDate.getTime())) return "No date";
+  if (Number.isNaN(parsedDate.getTime())) {
+    return "Recently";
+  }
 
-  return new Intl.DateTimeFormat("en", {
-    month: "short",
-    day: "numeric",
-  }).format(parsedDate);
+  return formatDistanceToNow(parsedDate, {
+    addSuffix: true,
+  });
 };
 
 const getActivityStyles = (badge: ActivityType) => {
@@ -89,7 +91,7 @@ export default function RecentActivity({ clients, deals, tasks }: Props) {
       id: `task-${task.id}`,
       title: task.title,
       description: task.due_date
-        ? `Due ${formatDate(task.due_date)} · ${task.status}`
+        ? `Due ${formatRelativeTime(task.due_date)} · ${task.status}`
         : `Task · ${task.status}`,
       href: "/tasks",
       createdAt: task.due_date || "",
@@ -167,9 +169,15 @@ export default function RecentActivity({ clients, deals, tasks }: Props) {
                           {activity.title}
                         </p>
 
-                        <p className="mt-1 truncate text-sm text-slate-500 dark:text-slate-400">
-                          {activity.description}
-                        </p>
+                        <div className="mt-1 flex items-center justify-between gap-3">
+                          <p className="truncate text-sm text-slate-500 dark:text-slate-400">
+                            {activity.description}
+                          </p>
+
+                          <span className="shrink-0 text-xs text-slate-400 dark:text-slate-500">
+                            {formatRelativeTime(activity.createdAt)}
+                          </span>
+                        </div>
                       </div>
 
                       <span
@@ -179,8 +187,7 @@ export default function RecentActivity({ clients, deals, tasks }: Props) {
                       </span>
                     </div>
 
-                    <div className="mt-3 flex items-center justify-between text-xs text-slate-400 dark:text-slate-500">
-                      <span>{formatDate(activity.createdAt)}</span>
+                    <div className="mt-3 flex justify-end text-xs text-slate-400 dark:text-slate-500">
                       <span className="opacity-0 transition group-hover:opacity-100">
                         View →
                       </span>

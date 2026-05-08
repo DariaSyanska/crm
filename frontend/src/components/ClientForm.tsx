@@ -2,16 +2,21 @@
 
 import { FormEvent, useState } from "react";
 import { api } from "@/lib/api";
+import FormField from "@/components/ui/FormField";
+import {
+  inputClassName,
+  primaryButtonClassName,
+  selectClassName,
+} from "@/components/ui/formStyles";
 
 type Props = {
   onCreated: () => void;
 };
 
-const inputClassName =
-  "h-16 w-full rounded-2xl border border-slate-300 bg-white px-5 text-lg text-slate-900 placeholder:text-slate-400 outline-none transition-all duration-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-950/60 dark:text-white dark:placeholder:text-slate-500";
-
-const selectClassName =
-  "h-16 w-full rounded-2xl border border-slate-300 bg-white px-5 text-lg text-slate-900 outline-none transition-all duration-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-950/60 dark:text-white";
+type Errors = {
+  name?: string;
+  email?: string;
+};
 
 export default function ClientForm({ onCreated }: Props) {
   const [name, setName] = useState("");
@@ -20,17 +25,37 @@ export default function ClientForm({ onCreated }: Props) {
   const [company, setCompany] = useState("");
   const [status, setStatus] = useState("new");
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<Errors>({});
+
+  const validateForm = () => {
+    const nextErrors: Errors = {};
+
+    if (!name.trim()) {
+      nextErrors.name = "Client name is required";
+    }
+
+    if (email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      nextErrors.email = "Enter a valid email address";
+    }
+
+    setErrors(nextErrors);
+
+    return Object.keys(nextErrors).length === 0;
+  };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+
+    if (!validateForm()) return;
+
     setLoading(true);
 
     try {
       await api.post("/clients/", {
-        name,
-        phone,
-        email,
-        company,
+        name: name.trim(),
+        phone: phone.trim(),
+        email: email.trim(),
+        company: company.trim(),
         status,
       });
 
@@ -39,10 +64,14 @@ export default function ClientForm({ onCreated }: Props) {
       setEmail("");
       setCompany("");
       setStatus("new");
+      setErrors({});
+
       onCreated();
     } catch (error) {
       console.error(error);
-      alert("Failed to create client");
+      setErrors({
+        name: "Failed to create client. Please try again.",
+      });
     } finally {
       setLoading(false);
     }
@@ -51,51 +80,68 @@ export default function ClientForm({ onCreated }: Props) {
   return (
     <form onSubmit={handleSubmit}>
       <div className="grid gap-4 md:grid-cols-2">
-        <input
-          className={inputClassName}
-          placeholder="Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-        />
+        <FormField label="Name" error={errors.name}>
+          <input
+            className={inputClassName}
+            placeholder="Anna Novak"
+            value={name}
+            onChange={(e) => {
+              setName(e.target.value);
+              if (errors.name) setErrors((prev) => ({ ...prev, name: "" }));
+            }}
+          />
+        </FormField>
 
-        <input
-          className={inputClassName}
-          placeholder="Phone"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-        />
+        <FormField label="Phone">
+          <input
+            className={inputClassName}
+            placeholder="+420777123456"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+          />
+        </FormField>
 
-        <input
-          className={inputClassName}
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
+        <FormField label="Email" error={errors.email}>
+          <input
+            className={inputClassName}
+            placeholder="anna@example.com"
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              if (errors.email) setErrors((prev) => ({ ...prev, email: "" }));
+            }}
+          />
+        </FormField>
 
-        <input
-          className={inputClassName}
-          placeholder="Company"
-          value={company}
-          onChange={(e) => setCompany(e.target.value)}
-        />
+        <FormField label="Company">
+          <input
+            className={inputClassName}
+            placeholder="Novak Marketing"
+            value={company}
+            onChange={(e) => setCompany(e.target.value)}
+          />
+        </FormField>
 
-        <select
-          className={`${selectClassName} md:col-span-2`}
-          value={status}
-          onChange={(e) => setStatus(e.target.value)}
-        >
-          <option value="new">New</option>
-          <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
-        </select>
+        <div className="md:col-span-2">
+          <FormField label="Status">
+            <select
+              className={selectClassName}
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+            >
+              <option value="new">New</option>
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
+          </FormField>
+        </div>
       </div>
 
       <div className="mt-6 flex justify-end">
         <button
           type="submit"
           disabled={loading}
-          className="rounded-xl bg-blue-600 px-5 py-3 font-medium text-white shadow transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+          className={primaryButtonClassName}
         >
           {loading ? "Creating..." : "Create Client"}
         </button>

@@ -4,32 +4,35 @@ import { FormEvent, useEffect, useState } from "react";
 import { api } from "@/lib/api";
 import { Client } from "@/types/client";
 import { Note } from "@/types/note";
+import FormField from "@/components/ui/FormField";
+import {
+  primaryButtonClassName,
+  selectClassName,
+  textareaClassName,
+} from "@/components/ui/formStyles";
 
 type Props = {
   note: Note;
   onUpdated: () => void;
 };
 
-const selectClassName =
-  "h-16 w-full rounded-2xl border border-slate-300 bg-white px-5 text-lg text-slate-900 outline-none transition-all duration-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-950/60 dark:text-white";
-
-const textareaClassName =
-  "min-h-[160px] w-full rounded-2xl border border-slate-300 bg-white p-5 text-lg text-slate-900 placeholder:text-slate-400 outline-none transition-all duration-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-950/60 dark:text-white dark:placeholder:text-slate-500";
+type Errors = {
+  clientId?: string;
+  text?: string;
+  form?: string;
+};
 
 export default function EditNoteForm({ note, onUpdated }: Props) {
   const [clients, setClients] = useState<Client[]>([]);
-
   const [clientId, setClientId] = useState(String(note.client_id));
-
   const [text, setText] = useState(note.text);
-
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<Errors>({});
 
   useEffect(() => {
     const fetchClients = async () => {
       try {
         const response = await api.get("/clients/");
-
         setClients(response.data);
       } catch (error) {
         console.error("Failed to fetch clients:", error);
@@ -39,22 +42,49 @@ export default function EditNoteForm({ note, onUpdated }: Props) {
     fetchClients();
   }, []);
 
+  const validateForm = () => {
+    const nextErrors: Errors = {};
+
+    if (!clientId) {
+      nextErrors.clientId = "Client is required";
+    }
+
+    if (!text.trim()) {
+      nextErrors.text = "Note text is required";
+    }
+
+    setErrors(nextErrors);
+
+    return Object.keys(nextErrors).length === 0;
+  };
+
+  const clearError = (field: keyof Errors) => {
+    if (errors[field]) {
+      setErrors((prev) => ({ ...prev, [field]: "" }));
+    }
+  };
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+
+    if (!validateForm()) return;
 
     setLoading(true);
 
     try {
       await api.put(`/notes/${note.id}`, {
         client_id: Number(clientId),
-        text,
+        text: text.trim(),
       });
 
+      setErrors({});
       onUpdated();
     } catch (error: any) {
       console.error("Failed to update note:", error);
 
-      alert(error?.response?.data?.detail || "Failed to update note");
+      setErrors({
+        form: error?.response?.data?.detail || "Failed to update note",
+      });
     } finally {
       setLoading(false);
     }
@@ -62,46 +92,50 @@ export default function EditNoteForm({ note, onUpdated }: Props) {
 
   return (
     <form onSubmit={handleSubmit}>
+      {errors.form ? (
+        <div className="mb-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-600 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300">
+          {errors.form}
+        </div>
+      ) : null}
+
       <div className="grid gap-4">
-        <select
-          className={selectClassName}
-          value={clientId}
-          onChange={(e) => setClientId(e.target.value)}
-          required
-        >
-          <option value="">Select client</option>
+        <FormField label="Client" error={errors.clientId}>
+          <select
+            className={selectClassName}
+            value={clientId}
+            onChange={(e) => {
+              setClientId(e.target.value);
+              clearError("clientId");
+            }}
+          >
+            <option value="">Select client</option>
 
-          {clients.map((client) => (
-            <option key={client.id} value={client.id}>
-              {client.name} ({client.company || "No company"})
-            </option>
-          ))}
-        </select>
+            {clients.map((client) => (
+              <option key={client.id} value={client.id}>
+                {client.name} ({client.company || "No company"})
+              </option>
+            ))}
+          </select>
+        </FormField>
 
-        <textarea
-          className={textareaClassName}
-          placeholder="Write note text"
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          required
-        />
+        <FormField label="Note text" error={errors.text}>
+          <textarea
+            className={textareaClassName}
+            placeholder="Write note text..."
+            value={text}
+            onChange={(e) => {
+              setText(e.target.value);
+              clearError("text");
+            }}
+          />
+        </FormField>
       </div>
 
       <div className="mt-6 flex justify-end">
         <button
           type="submit"
           disabled={loading}
-          className="
-            rounded-xl bg-blue-600 px-5 py-3
-            font-medium text-white shadow
-            transition-all duration-200
-
-            hover:scale-[1.02]
-            hover:bg-blue-700
-
-            disabled:cursor-not-allowed
-            disabled:opacity-60
-          "
+          className={primaryButtonClassName}
         >
           {loading ? "Saving..." : "Save Changes"}
         </button>

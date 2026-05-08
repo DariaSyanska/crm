@@ -2,14 +2,16 @@
 
 import { FormEvent, useState } from "react";
 import { api } from "@/lib/api";
+import FormField from "@/components/ui/FormField";
+import {
+  primaryButtonClassName,
+  textareaClassName,
+} from "@/components/ui/formStyles";
 
 type Props = {
   clientId: number;
   onCreated: () => Promise<void> | void;
 };
-
-const textareaClassName =
-  "min-h-[160px] w-full rounded-2xl border border-slate-300 bg-white p-5 text-lg text-slate-900 placeholder:text-slate-400 outline-none transition-all duration-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-950/60 dark:text-white dark:placeholder:text-slate-500";
 
 export default function QuickNoteForm({ clientId, onCreated }: Props) {
   const [text, setText] = useState("");
@@ -18,6 +20,7 @@ export default function QuickNoteForm({ clientId, onCreated }: Props) {
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
+
     setError("");
 
     if (!text.trim()) {
@@ -34,6 +37,7 @@ export default function QuickNoteForm({ clientId, onCreated }: Props) {
       });
 
       setText("");
+
       await onCreated();
     } catch (err: any) {
       setError(err?.response?.data?.detail || "Failed to create note");
@@ -45,13 +49,7 @@ export default function QuickNoteForm({ clientId, onCreated }: Props) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="
-        rounded-3xl border border-slate-200
-        bg-white p-6 shadow-sm
-
-        dark:border-slate-800
-        dark:bg-slate-900
-      "
+      className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition-colors dark:border-slate-800 dark:bg-slate-900"
     >
       <div className="mb-5">
         <h3 className="text-xl font-bold text-slate-900 dark:text-white">
@@ -63,32 +61,32 @@ export default function QuickNoteForm({ clientId, onCreated }: Props) {
         </p>
       </div>
 
-      <textarea
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        placeholder="Type your note here..."
-        className={textareaClassName}
-      />
+      {error ? (
+        <div className="mb-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-600 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300">
+          {error}
+        </div>
+      ) : null}
 
-      {error && (
-        <p className="mt-4 text-sm font-medium text-red-500">{error}</p>
-      )}
+      <FormField label="Note">
+        <textarea
+          value={text}
+          onChange={(e) => {
+            setText(e.target.value);
+
+            if (error) {
+              setError("");
+            }
+          }}
+          placeholder="Type your note here..."
+          className={textareaClassName}
+        />
+      </FormField>
 
       <div className="mt-6 flex justify-end">
         <button
           type="submit"
           disabled={loading}
-          className="
-            rounded-xl bg-blue-600 px-5 py-3
-            font-medium text-white shadow
-            transition-all duration-200
-
-            hover:scale-[1.02]
-            hover:bg-blue-700
-
-            disabled:cursor-not-allowed
-            disabled:opacity-60
-          "
+          className={primaryButtonClassName}
         >
           {loading ? "Saving..." : "Add Note"}
         </button>

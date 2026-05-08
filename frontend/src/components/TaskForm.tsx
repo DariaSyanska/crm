@@ -3,19 +3,22 @@
 import { FormEvent, useEffect, useState } from "react";
 import { api } from "@/lib/api";
 import { Client } from "@/types/client";
+import FormField from "@/components/ui/FormField";
+import {
+  inputClassName,
+  primaryButtonClassName,
+  selectClassName,
+  textareaClassName,
+} from "@/components/ui/formStyles";
 
 type Props = {
   onCreated: () => void;
 };
 
-const inputClassName =
-  "h-16 w-full rounded-2xl border border-slate-300 bg-white px-5 text-lg text-slate-900 placeholder:text-slate-400 outline-none transition-all duration-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-950/60 dark:text-white dark:placeholder:text-slate-500";
-
-const selectClassName =
-  "h-16 w-full rounded-2xl border border-slate-300 bg-white px-5 text-lg text-slate-900 outline-none transition-all duration-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-950/60 dark:text-white";
-
-const textareaClassName =
-  "min-h-[140px] w-full rounded-2xl border border-slate-300 bg-white p-5 text-lg text-slate-900 placeholder:text-slate-400 outline-none transition-all duration-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-950/60 dark:text-white dark:placeholder:text-slate-500";
+type Errors = {
+  title?: string;
+  form?: string;
+};
 
 export default function TaskForm({ onCreated }: Props) {
   const [clients, setClients] = useState<Client[]>([]);
@@ -25,6 +28,7 @@ export default function TaskForm({ onCreated }: Props) {
   const [status, setStatus] = useState("open");
   const [clientId, setClientId] = useState("");
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<Errors>({});
 
   useEffect(() => {
     const fetchClients = async () => {
@@ -39,14 +43,29 @@ export default function TaskForm({ onCreated }: Props) {
     fetchClients();
   }, []);
 
+  const validateForm = () => {
+    const nextErrors: Errors = {};
+
+    if (!title.trim()) {
+      nextErrors.title = "Task title is required";
+    }
+
+    setErrors(nextErrors);
+
+    return Object.keys(nextErrors).length === 0;
+  };
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+
+    if (!validateForm()) return;
+
     setLoading(true);
 
     try {
       await api.post("/tasks/", {
-        title,
-        description: description || null,
+        title: title.trim(),
+        description: description.trim() || null,
         due_date: dueDate || null,
         status,
         client_id: clientId ? Number(clientId) : null,
@@ -57,12 +76,15 @@ export default function TaskForm({ onCreated }: Props) {
       setDueDate("");
       setStatus("open");
       setClientId("");
+      setErrors({});
 
       onCreated();
     } catch (error: any) {
       console.error("Failed to create task:", error);
 
-      alert(error?.response?.data?.detail || "Failed to create task");
+      setErrors({
+        form: error?.response?.data?.detail || "Failed to create task",
+      });
     } finally {
       setLoading(false);
     }
@@ -70,69 +92,81 @@ export default function TaskForm({ onCreated }: Props) {
 
   return (
     <form onSubmit={handleSubmit}>
+      {errors.form ? (
+        <div className="mb-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-600 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300">
+          {errors.form}
+        </div>
+      ) : null}
+
       <div className="grid gap-4 md:grid-cols-2">
-        <input
-          className={inputClassName}
-          placeholder="Task title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          required
-        />
+        <FormField label="Title" error={errors.title}>
+          <input
+            className={inputClassName}
+            placeholder="Call Anna Novak"
+            value={title}
+            onChange={(e) => {
+              setTitle(e.target.value);
+              if (errors.title) {
+                setErrors((prev) => ({ ...prev, title: "" }));
+              }
+            }}
+          />
+        </FormField>
 
-        <select
-          className={selectClassName}
-          value={status}
-          onChange={(e) => setStatus(e.target.value)}
-        >
-          <option value="open">Open</option>
-          <option value="in_progress">In progress</option>
-          <option value="done">Done</option>
-        </select>
+        <FormField label="Status">
+          <select
+            className={selectClassName}
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
+          >
+            <option value="open">Open</option>
+            <option value="in_progress">In progress</option>
+            <option value="done">Done</option>
+          </select>
+        </FormField>
 
-        <select
-          className={selectClassName}
-          value={clientId}
-          onChange={(e) => setClientId(e.target.value)}
-        >
-          <option value="">No client</option>
+        <FormField label="Client">
+          <select
+            className={selectClassName}
+            value={clientId}
+            onChange={(e) => setClientId(e.target.value)}
+          >
+            <option value="">No client</option>
 
-          {clients.map((client) => (
-            <option key={client.id} value={client.id}>
-              {client.name}
-            </option>
-          ))}
-        </select>
+            {clients.map((client) => (
+              <option key={client.id} value={client.id}>
+                {client.name}
+              </option>
+            ))}
+          </select>
+        </FormField>
 
-        <input
-          type="datetime-local"
-          className={inputClassName}
-          value={dueDate}
-          onChange={(e) => setDueDate(e.target.value)}
-        />
+        <FormField label="Due date">
+          <input
+            type="datetime-local"
+            className={inputClassName}
+            value={dueDate}
+            onChange={(e) => setDueDate(e.target.value)}
+          />
+        </FormField>
 
-        <textarea
-          className={`${textareaClassName} md:col-span-2`}
-          placeholder="Task description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
+        <div className="md:col-span-2">
+          <FormField label="Description">
+            <textarea
+              className={textareaClassName}
+              placeholder="Task description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+          </FormField>
+        </div>
       </div>
 
       <div className="mt-6 flex justify-end">
         <button
           type="submit"
           disabled={loading}
-          className="
-          rounded-xl bg-blue-600 px-5 py-3
-          font-medium text-white shadow
-          transition-all duration-200
-
-          hover:bg-blue-700
-          hover:scale-[1.02]
-
-          disabled:cursor-not-allowed
-          disabled:opacity-60
-          "
+          className={primaryButtonClassName}
         >
           {loading ? "Creating..." : "Create Task"}
         </button>
