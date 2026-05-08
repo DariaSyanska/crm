@@ -12,6 +12,17 @@ Built with Next.js, FastAPI, PostgreSQL, and modern SaaS UI patterns.
 
 ---
 
+## ✨ Highlights
+
+- Fullstack SaaS CRM platform
+- Drag & Drop Kanban pipeline
+- Analytics dashboard
+- JWT authentication
+- Responsive dark/light UI
+- Built with Next.js + FastAPI
+
+---
+
 ## 🌐 Live Demo
 
 Frontend:
@@ -154,31 +165,17 @@ It focuses on **clean architecture, UX, and real-world product logic**.
 ![Dashboard Dark](./frontend/public/screenshots/dashboard-dark-1.png)
 ![Dashboard Dark](./frontend/public/screenshots/dashboard-dark-2.png)
 
-### Clients
-![Clients Light](./frontend/public/screenshots/clients-light.png)
-![Clients Dark](./frontend/public/screenshots/clients-dark.png)
-
 ### Deals (Kanban Drag & Drop)
 ![Deals Light](./frontend/public/screenshots/deals-kanban-light.png)
 ![Deals Dark](./frontend/public/screenshots/deals-kanban-dark.png)
 
-### Tasks
-![Tasks Light](./frontend/public/screenshots/tasks-light.png)
-![Tasks Dark](./frontend/public/screenshots/tasks-dark.png)
-
-### Notes
-![Notes Light](./frontend/public/screenshots/notes-light.png)
-![Notes Dark](./frontend/public/screenshots/notes-dark.png)
-
 ### Create Forms
 ![Create Client Light](./frontend/public/screenshots/create-client-light.png)
 ![Create Client Dark](./frontend/public/screenshots/create-client-dark.png)
-![Create Deal Light](./frontend/public/screenshots/create-deal-light.png)
-![Create Deal Dark](./frontend/public/screenshots/create-deal-dark.png)
-![Create Task Light](./frontend/public/screenshots/create-task-light.png)
-![Create Task Dark](./frontend/public/screenshots/create-task-dark.png)
-![Create Note Light](./frontend/public/screenshots/create-note-light.png)
-![Create Note Dark](./frontend/public/screenshots/create-note-dark.png)
+
+### Mobile UI
+![Mobile Light](./frontend/public/screenshots/mobile-light.png)
+![Mobile Dark](./frontend/public/screenshots/mobilee-dark.png)
 
 
 ---
@@ -267,10 +264,10 @@ DATABASE_URL=sqlite:///./crm.db
 
 ## 👤 Demo Account
 
-Use the following credentials:
+Try the demo account:
 
-- **Email:** `admin@example.com`
-- **Password:** `123456`
+> Email: admin@example.com  
+> Password: 123456
 
 ---
 
