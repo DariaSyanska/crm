@@ -1,4 +1,4 @@
-# 🚀 CRM SaaS (Fullstack)
+# 🚀 CRM SaaS Platform
 
 ![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)
 ![FastAPI](https://img.shields.io/badge/FastAPI-Backend-009688?logo=fastapi)
@@ -6,20 +6,19 @@
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-DB-336791?logo=postgresql)
 ![Vercel](https://img.shields.io/badge/Deployed-Vercel-black?logo=vercel)
 
-Full-stack CRM application for managing **clients, deals, tasks, and sales pipeline activity**.
+Full-stack CRM platform for managing clients, deals, tasks, and sales pipelines.
 
-Built as a **modern SaaS-style product** with authentication, analytics dashboard, and drag-and-drop Kanban.
-
-👉 Designed as a production-like CRM system with real user flows and business logic.
+Built with Next.js, FastAPI, PostgreSQL, and modern SaaS UI patterns.
 
 ---
 
 ## 🌐 Live Demo
 
-👉 https://crm-self-one.vercel.app
+Frontend:
+https://crm-self-one.vercel.app
 
-Backend API:  
-👉 https://crm-b542.onrender.com *(may take ~30s to wake up)*
+Backend API:
+https://crm-b542.onrender.com
 
 ---
 
@@ -33,10 +32,10 @@ Backend API:
 
 ## 🖥 Preview
 
-## Dashboard
+### Analytics Dashboard
 ![Dashboard](./frontend/public/screenshots/dashboard-dark-1.png)
 
-## Deals
+### Kanban Pipeline
 ![Deals](./frontend/public/screenshots/deals-kanban-dark.png)
 
 ---
@@ -84,13 +83,6 @@ Backend API:
 - Notes per client
 - Search & filtering
 - User attribution
-
-### 🎨 UI / UX
-- Dark / Light theme toggle
-- Responsive SaaS layout
-- Empty states
-- Toast notifications
-- Clean reusable components
 
 ---
 
@@ -145,7 +137,7 @@ It focuses on **clean architecture, UX, and real-world product logic**.
 
 - Implemented drag-and-drop pipeline sync with optimistic UI updates
 - Built reusable modal system with animated transitions
-- Solved responsive chart rendering issues in Recharts
+- Built responsive chart rendering system for Recharts with dynamic sizing
 - Designed scalable dashboard card architecture
 
 ---
@@ -331,12 +323,25 @@ npm run build
 - WebSocket real-time updates
 - Notifications system
 - Public demo mode
+- Team collaboration features
+- Activity audit logs
+- Advanced analytics dashboard
+
+---
+
+## 🧪 Testing & UX Focus
+- Optimistic UI updates
+- Empty states
+- Loading skeletons
+- Responsive mobile experience
+- Reusable form architecture
+- Accessible contrast & spacing system
 
 ---
 
 ## 📝 Notes
 
-This project is built for portfolio purposes and is not production-ready without additional security and scaling improvements.
+This project focuses on scalable architecture, UX, and modern SaaS product patterns.
 
 > ⚠️ Backend is hosted on Render and may take ~30 seconds to wake up on first request.
 
