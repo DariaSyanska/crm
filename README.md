@@ -133,17 +133,6 @@ It focuses on **clean architecture, UX, and real-world product logic**.
 
 ---
 
-## ⚡ Key Highlights
-
-- 🧩 Fullstack architecture (Next.js + FastAPI)
-- 📊 Real-time UI updates with API sync
-- 🎯 Drag & Drop Kanban (dnd-kit)
-- 🌙 Dark / Light mode
-- 📱 Fully responsive UI
-- 🔐 JWT authentication system
-
----
-
 ## 🧩 Challenges
 
 - Implemented drag-and-drop pipeline sync with optimistic UI updates
@@ -175,7 +164,7 @@ It focuses on **clean architecture, UX, and real-world product logic**.
 
 ### Mobile UI
 ![Mobile Light](./frontend/public/screenshots/mobile-light.png)
-![Mobile Dark](./frontend/public/screenshots/mobilee-dark.png)
+![Mobile Dark](./frontend/public/screenshots/mobile-dark.png)
 
 
 ---
@@ -347,7 +336,8 @@ This project focuses on scalable architecture, UX, and modern SaaS product patte
 ## 🙌 Author
 
 Daria Sianska  
-Frontend / Fullstack Developer  
+Frontend / Fullstack Developer
 
 - GitHub: https://github.com/DariaSyanska
 - Portfolio: https://dariasyanska.github.io/portfolio/
+- LinkedIn: https://www.linkedin.com/in/daria-sianska/
