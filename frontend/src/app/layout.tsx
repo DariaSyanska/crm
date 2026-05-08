@@ -3,8 +3,24 @@ import { Toaster } from "sonner";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "CRM System",
-  description: "Portfolio CRM project",
+  metadataBase: new URL("https://crm-self-one.vercel.app"),
+  title: "CRM SaaS",
+  description: "Modern CRM system built with Next.js and FastAPI",
+  openGraph: {
+    title: "CRM SaaS",
+    description: "Modern CRM system built with Next.js and FastAPI",
+    url: "https://crm-self-one.vercel.app",
+    siteName: "CRM SaaS",
+    images: [
+      {
+        url: "/og-cover.png",
+        width: 1200,
+        height: 630,
+        alt: "CRM SaaS Preview",
+      },
+    ],
+    type: "website",
+  },
 };
 
 export default function RootLayout({
